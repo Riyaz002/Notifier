@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "462450971888",
+    "project_id": "notifier-d9757",
+    "storage_bucket": "notifier-d9757.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:462450971888:android:de0ad7d9a78a9f69e55e35",
+        "android_client_info": {
+          "package_name": "com.wiseowl.notifier"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "@String/google_api"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
