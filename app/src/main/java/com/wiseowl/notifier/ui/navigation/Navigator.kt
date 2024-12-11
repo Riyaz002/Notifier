@@ -8,9 +8,9 @@ import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
 
 object Navigator {
-    private val channels = Channel<Screen> {  }
+    private val channels = Channel<Action> {  }
     private val coroutineScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
-    private var subscriber: ((Screen) -> Unit)? = null
+    private var subscriber: ((Action) -> Unit)? = null
     init {
         coroutineScope.launch {
             channels.consumeAsFlow().collect{ screen ->
@@ -21,13 +21,19 @@ object Navigator {
         }
     }
 
-    fun navigate(screen: Screen){
+    fun navigate(action: Action){
         coroutineScope.launch {
-            channels.send(screen)
+            channels.send(action)
         }
     }
 
-    fun observe(onNavigate: (Screen) -> Unit){
+    fun popBackStack(action: Action){
+        coroutineScope.launch {
+            channels.send(action)
+        }
+    }
+
+    fun observe(onNavigate: (Action) -> Unit){
         subscriber = onNavigate
     }
 }

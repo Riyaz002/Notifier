@@ -4,6 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.launch
 
@@ -14,7 +15,7 @@ open class Event<T> {
 
     init {
         coroutineScope.launch {
-            channel.consumeAsFlow().collect{ data ->
+            channel.consumeAsFlow().collectLatest{ data ->
                 subscribers.forEach {
                     it.invoke(data)
                 }

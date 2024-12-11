@@ -1,10 +1,10 @@
-package com.wiseowl.notifier.data
+package com.wiseowl.notifier.data.local
 
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.wiseowl.notifier.data.entity.RuleEntity
+import com.wiseowl.notifier.data.local.entity.RuleEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao

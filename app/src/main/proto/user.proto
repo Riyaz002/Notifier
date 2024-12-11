@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+option java_package = "com.wiseowl.notifier";
+option java_multiple_files = true;
+
+message User {
+  string uId = 1;
+  string email = 2;
+  string firstName = 3;
+  string lastName = 4;
+  optional string profilePicture = 5;
+}

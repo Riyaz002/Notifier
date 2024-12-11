@@ -7,10 +7,8 @@ sealed interface Screen
 @Serializable
 data object Login: Screen
 @Serializable
+data object Registration: Screen
+@Serializable
 data object Home: Screen
 @Serializable
-data object Profile: Screen
-@Serializable
 data object AddRule: Screen
-@Serializable
-data object Setting: Screen

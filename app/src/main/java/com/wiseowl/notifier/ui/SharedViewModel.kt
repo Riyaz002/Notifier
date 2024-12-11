@@ -3,12 +3,12 @@ package com.wiseowl.notifier.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.wiseowl.notifier.domain.NotifierRepository
+import com.wiseowl.notifier.domain.RulesRepository
 import com.wiseowl.notifier.domain.model.Rule
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
-class SharedViewModel(private val repository: NotifierRepository): ViewModel() {
+class SharedViewModel(private val repository: RulesRepository): ViewModel() {
     private val rules: Flow<List<Rule>> = repository.getRules()
     private val _rules = rules.asLiveData()
 

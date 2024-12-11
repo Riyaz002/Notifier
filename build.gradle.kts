@@ -7,4 +7,5 @@ plugins {
     alias(libs.plugins.room.gradle) apply false
     alias(libs.plugins.google.sevice) apply false
     alias(libs.plugins.serialization) apply false
+    alias(libs.plugins.protobuf) apply false
 }

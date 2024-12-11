@@ -1,4 +1,4 @@
-package com.wiseowl.notifier.data
+package com.wiseowl.notifier.data.local
 
 import androidx.room.TypeConverter
 import com.wiseowl.notifier.domain.model.Location
@@ -12,7 +12,7 @@ object TypeConverter {
     @TypeConverter
     fun toLocation(location: String): Location{
         return location.split(":").run {
-            Location(first().toFloat(), last().toFloat())
+            Location(first().toDouble(), last().toDouble())
         }
     }
 }

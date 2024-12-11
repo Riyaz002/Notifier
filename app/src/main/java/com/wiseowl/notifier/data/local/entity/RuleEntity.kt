@@ -1,4 +1,4 @@
-package com.wiseowl.notifier.data.entity
+package com.wiseowl.notifier.data.local.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -19,7 +19,7 @@ data class RuleEntity(
 ){
     companion object{
         fun Rule.toRuleEntity() = RuleEntity(
-            title = title,
+            title = name,
             description = description,
             location = location,
             radiusInMeter = radiusInMeter,
@@ -30,7 +30,7 @@ data class RuleEntity(
 
         fun RuleEntity.toRule() = Rule(
             id = id,
-            title = title,
+            name = title,
             description = description,
             location = location,
             radiusInMeter = radiusInMeter,
