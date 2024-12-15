@@ -59,7 +59,7 @@ fun LoginScreen(
         }
 
         OutlinedTextField(
-            value = state.email.value,
+            value = state.email.value.toString(),
             shape = AbsoluteCutCornerShape(0.dp),
             singleLine = true,
             label = { Text(state.email.label)},
@@ -69,7 +69,7 @@ fun LoginScreen(
         )
 
         OutlinedTextField(
-            value = state.password.value,
+            value = state.password.value.toString(),
             shape = AbsoluteCutCornerShape(0.dp),
             singleLine = true,
             label = { Text(text = state.password.label)},
@@ -85,7 +85,7 @@ fun LoginScreen(
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
                 .background(color = MaterialTheme.colorScheme.primary, shape = AbsoluteCutCornerShape(0.dp)),
-            onClick = { viewModel.onEvent(LoginEvent.Login(state.email.value, state.password.value)) }
+            onClick = { viewModel.onEvent(LoginEvent.Login(state.email.value.toString(), state.password.value.toString())) }
         ) {
             Text(text = "Login")
         }

@@ -5,5 +5,5 @@ sealed class RegistrationEvent {
     data class EditLastName(val value: String): RegistrationEvent()
     data class EditEmail(val value: String): RegistrationEvent()
     data class EditPassword(val value: String): RegistrationEvent()
-    data class Register(val email: String, val password: String): RegistrationEvent()
+    data object Register: RegistrationEvent()
 }

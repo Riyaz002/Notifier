@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.wiseowl.notifier.ui.common.component.CustomTextField
 
 @Preview
 @Composable
@@ -29,6 +28,7 @@ fun AddRuleScreen(
             text = "Add Rule",
             fontSize = 32.sp
         )
-        CustomTextField(data = state.ruleDelay){  }
+
+
     }
 }
