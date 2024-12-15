@@ -40,7 +40,7 @@ class RegistrationViewModel: ViewModel() {
                 val email = state.value.email.value
                 val password = state.value.password.value
                 if(email.isNullOrEmpty()) {
-                    _state.update{ newState -> newState.copy(email = newState.password.copy(error = "email is required")) }
+                    _state.update{ newState -> newState.copy(email = newState.email.copy(error = "email is required")) }
                     SnackBarEvent.send("Email cannot be empty")
                     return
                 } else if(password.isNullOrEmpty()) {

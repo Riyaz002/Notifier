@@ -39,19 +39,11 @@ class AddRuleViewModel: ViewModel() {
                             Navigator.popBackStack(Pop())
                             SnackBarEvent.send("Rule added successfully")
                         } else{
-                            if(rule.name.isEmpty()){
-                                _state.update { it.copy(ruleName = it.ruleName.copy(error = "Name cannot be empty")) }
-                            }
-                            if(rule.place == null){
-                                _state.update { it.copy(place = it.place.copy(error = "Please choose a effecting place")) }
-                            }
-                            if(rule.radiusInMeter<1){
-                                _state.update { it.copy(ruleRadius = it.ruleRadius.copy(error = "radius should be greater than 0")) }
-                            }
-                            if(rule.delayInMinutes<1){
-                                _state.update { it.copy(ruleDelay = it.ruleDelay.copy(error = "delay should be greater than 0")) }
-                            }
-
+                            if(rule.name.isEmpty()) _state.update { it.copy(ruleName = it.ruleName.copy(error = "Name cannot be empty")) }
+                            if(rule.place == null) _state.update { it.copy(place = it.place.copy(error = "Please choose an effecting place")) }
+                            if(rule.actionType == null) _state.update { it.copy(actionType = it.actionType.copy(error = "Please choose an action type")) }
+                            if(rule.radiusInMeter<1) _state.update { it.copy(ruleRadius = it.ruleRadius.copy(error = "radius should be greater than 0")) }
+                            if(rule.delayInMinutes<1) _state.update { it.copy(ruleDelay = it.ruleDelay.copy(error = "delay should be greater than 0")) }
                         }
                     }
                 }
