@@ -64,7 +64,6 @@ class RegistrationViewModel: ViewModel() {
                                         profilePicture = null
                                     )
                                 )
-                                _state.update{ newState -> newState.copy(isUserLoggedIn = true) }
                                 ProgressBarEvent.send(false)
                             }
                         }

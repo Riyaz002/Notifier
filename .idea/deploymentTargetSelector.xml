@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2024-11-23T11:49:34.198977036Z">
+        <DropdownSelection timestamp="2024-12-16T09:37:54.693326325Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=33071JEGR31163" />
+              <DeviceId pluginId="LocalEmulator" identifier="path=/home/riyaz/.android/avd/Pixel_8_Pro_API_35.avd" />
             </handle>
           </Target>
         </DropdownSelection>
@@ -17,6 +17,9 @@
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="isRuleValidReturnsFalseIfDescriptionIsEmpty()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="RuleValidatorTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

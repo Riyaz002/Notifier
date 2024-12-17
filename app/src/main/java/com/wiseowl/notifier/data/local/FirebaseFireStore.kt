@@ -36,10 +36,10 @@ object FirebaseFireStore {
         val result = Firebase.firestore.collection("users").document(id).get().await()
         return User(
             userId = result.get(FirebaseFireStoreKey.UID.key).toString(),
-            firstName = result.get(FirebaseFireStoreKey.EMAIL.key).toString(),
-            lastName = result.get(FirebaseFireStoreKey.EMAIL.key).toString(),
+            firstName = result.get(FirebaseFireStoreKey.FIRST_NAME.key).toString(),
+            lastName = result.get(FirebaseFireStoreKey.LAST_NAME.key).toString(),
             email = result.get(FirebaseFireStoreKey.EMAIL.key).toString(),
-            profilePicture = result.get(FirebaseFireStoreKey.EMAIL.key).toString(),
+            profilePicture = result.get(FirebaseFireStoreKey.PROFILE_PICTURE.key).toString(),
         )
     }
 

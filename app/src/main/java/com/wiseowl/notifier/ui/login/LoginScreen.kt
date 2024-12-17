@@ -15,14 +15,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -44,19 +39,7 @@ fun LoginScreen(
         modifier = modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
     ) {
-        var state: LoginState by remember {
-            mutableStateOf(LoginState())
-        }
-        val scope = rememberCoroutineScope()
-
-        LaunchedEffect(key1 = true) {
-            scope.launch {
-                viewModel.state.collect { newState ->
-                    state = newState
-                    if(state.isUserLoggedIn) Navigator.navigate(Navigate(Home))
-                }
-            }
-        }
+        val state by viewModel.state.collectAsState()
 
         OutlinedTextField(
             value = state.email.value.toString(),
@@ -65,7 +48,9 @@ fun LoginScreen(
             label = { Text(state.email.label)},
             onValueChange = { viewModel.onEvent(LoginEvent.EditUserName(it)) },
             isError = !state.email.error.isNullOrEmpty(),
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
         )
 
         OutlinedTextField(
@@ -84,7 +69,10 @@ fun LoginScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
-                .background(color = MaterialTheme.colorScheme.primary, shape = AbsoluteCutCornerShape(0.dp)),
+                .background(
+                    color = MaterialTheme.colorScheme.primary,
+                    shape = AbsoluteCutCornerShape(0.dp)
+                ),
             onClick = { viewModel.onEvent(LoginEvent.Login(state.email.value.toString(), state.password.value.toString())) }
         ) {
             Text(text = "Login")

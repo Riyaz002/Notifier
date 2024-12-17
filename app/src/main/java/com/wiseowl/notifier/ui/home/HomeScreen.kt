@@ -23,7 +23,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wiseowl.notifier.ui.home.component.Rules
-import com.wiseowl.notifier.ui.addrule.model.AddRuleEvent
 import com.wiseowl.notifier.ui.home.model.HomeEvent
 import com.wiseowl.notifier.ui.home.model.HomeState
 
