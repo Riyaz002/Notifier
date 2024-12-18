@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.map
 
 class RulesRepositoryImpl(private val dao: Dao): RulesRepository {
     override fun getRules(): Flow<List<Rule>> {
-        return dao.getRules().map { it.map { it.toRule() } }
+        return dao.getRules().map { it.map { rule -> rule.toRule() } }
     }
 
     override suspend fun addRule(rule: Rule) {

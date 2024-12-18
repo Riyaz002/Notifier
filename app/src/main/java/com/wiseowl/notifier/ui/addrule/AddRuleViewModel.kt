@@ -3,13 +3,14 @@ package com.wiseowl.notifier.ui.addrule
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.wiseowl.notifier.data.ServiceLocator
-import com.wiseowl.notifier.domain.event.SnackBarEvent
+import com.wiseowl.notifier.domain.event.EventHandler
 import com.wiseowl.notifier.domain.model.Rule
 import com.wiseowl.notifier.domain.util.RuleValidator
+import com.wiseowl.notifier.ui.Event
+import com.wiseowl.notifier.ui.PopBackStack
+import com.wiseowl.notifier.ui.SnackBar
 import com.wiseowl.notifier.ui.addrule.model.AddRuleEvent
 import com.wiseowl.notifier.ui.addrule.model.AddRuleState
-import com.wiseowl.notifier.ui.navigation.Navigator
-import com.wiseowl.notifier.ui.navigation.Pop
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -19,7 +20,7 @@ class AddRuleViewModel: ViewModel() {
     private val _state = MutableStateFlow(AddRuleState())
     val state: StateFlow<AddRuleState> get() = _state
 
-    fun onEvent(event: AddRuleEvent){
+    fun onEvent(event: Event){
         when(event){
             is AddRuleEvent.CreateRule -> {
                 viewModelScope.launch{
@@ -36,8 +37,8 @@ class AddRuleViewModel: ViewModel() {
                     with(RuleValidator(rule)){
                         if(isRuleValid()){
                             ServiceLocator.getRulesRepository().addRule(rule)
-                            Navigator.popBackStack(Pop())
-                            SnackBarEvent.send("Rule added successfully")
+                            EventHandler.send(PopBackStack)
+                            EventHandler.send(SnackBar("Rule added successfully"))
                         } else{
                             if(rule.name.isEmpty()) _state.update { it.copy(ruleName = it.ruleName.copy(error = "Name cannot be empty")) }
                             if(rule.place == null) _state.update { it.copy(place = it.place.copy(error = "Please choose an effecting place")) }
@@ -54,6 +55,7 @@ class AddRuleViewModel: ViewModel() {
             is AddRuleEvent.OnChangeRulePlace -> _state.update { state -> state.copy(place = state.place.copy(event.place)) }
             is AddRuleEvent.OnChangeRuleName -> _state.update { state -> state.copy( ruleName = state.ruleName.copy(event.name)) }
             is AddRuleEvent.OnChangeRuleRadius -> _state.update { state -> state.copy( ruleRadius = state.ruleRadius.copy(event.radiusInMeters)) }
+            else -> EventHandler.send(event)
         }
     }
 }

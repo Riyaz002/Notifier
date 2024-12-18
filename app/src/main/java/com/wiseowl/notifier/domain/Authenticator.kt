@@ -1,8 +1,8 @@
 package com.wiseowl.notifier.domain
 
 import com.wiseowl.notifier.domain.util.Result
-import com.wiseowl.notifier.domain.util.exception.SignInException
-import com.wiseowl.notifier.domain.util.exception.SignUpException
+import com.wiseowl.notifier.domain.exception.SignInException
+import com.wiseowl.notifier.domain.exception.SignUpException
 import kotlin.jvm.Throws
 
 interface Authenticator {

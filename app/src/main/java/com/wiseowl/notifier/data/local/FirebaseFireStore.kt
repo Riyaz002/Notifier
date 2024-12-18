@@ -28,7 +28,7 @@ object FirebaseFireStore {
         PROFILE_PICTURE("profilePicture")
     }
 
-    suspend fun saveNewUser(user: User) {
+    suspend fun saveUser(user: User) {
         Firebase.firestore.collection("users").document(user.userId).set(user.toMap()).await()
     }
 

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.AbsoluteCutCornerShape
-import androidx.compose.foundation.shape.AbsoluteRoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -21,13 +20,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.wiseowl.notifier.ui.Navigate
 import com.wiseowl.notifier.ui.login.model.LoginEvent
-import com.wiseowl.notifier.ui.login.model.LoginState
-import com.wiseowl.notifier.ui.navigation.Home
-import com.wiseowl.notifier.ui.navigation.Navigate
-import com.wiseowl.notifier.ui.navigation.Navigator
 import com.wiseowl.notifier.ui.navigation.Registration
-import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
@@ -80,7 +75,7 @@ fun LoginScreen(
 
         TextButton(
             modifier = Modifier.align(Alignment.CenterHorizontally),
-            onClick = { Navigator.navigate(Navigate(Registration)) }
+            onClick = { viewModel.onEvent(Navigate(Registration)) }
         ) { Text(text = "Don't have an account? Create one") }
     }
 }

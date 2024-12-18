@@ -5,10 +5,15 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.AuthResult
 import com.wiseowl.notifier.data.local.repository.UserRepositoryImpl
 import com.wiseowl.notifier.data.ServiceLocator
-import com.wiseowl.notifier.domain.event.ProgressBarEvent
+import com.wiseowl.notifier.domain.event.EventHandler
 import com.wiseowl.notifier.domain.util.Result
-import com.wiseowl.notifier.domain.event.SnackBarEvent
 import com.wiseowl.notifier.domain.model.User
+import com.wiseowl.notifier.ui.Event
+import com.wiseowl.notifier.ui.Navigate
+import com.wiseowl.notifier.ui.PopBackStack
+import com.wiseowl.notifier.ui.ProgressBar
+import com.wiseowl.notifier.ui.SnackBar
+import com.wiseowl.notifier.ui.navigation.Home
 import com.wiseowl.notifier.ui.registration.model.RegistrationEvent
 import com.wiseowl.notifier.ui.registration.model.RegistrationState
 import kotlinx.coroutines.Dispatchers
@@ -21,7 +26,7 @@ class RegistrationViewModel: ViewModel() {
     private val _state = MutableStateFlow(RegistrationState())
     val state: StateFlow<RegistrationState> get() = _state
 
-    fun onEvent(event: RegistrationEvent){
+    fun onEvent(event: Event){
         when(event){
             is RegistrationEvent.EditFirstName -> viewModelScope.launch {
                 _state.update { newState -> newState.copy(firstName = newState.firstName.updateValue(value = event.value)) }
@@ -36,26 +41,26 @@ class RegistrationViewModel: ViewModel() {
                 _state.update{ newState -> newState.copy(password = newState.password.updateValue(value = event.value)) }
             }
             is RegistrationEvent.Register -> {
-                ProgressBarEvent.send(true)
+                EventHandler.send(ProgressBar(true))
                 val email = state.value.email.value
                 val password = state.value.password.value
                 if(email.isNullOrEmpty()) {
                     _state.update{ newState -> newState.copy(email = newState.email.copy(error = "email is required")) }
-                    SnackBarEvent.send("Email cannot be empty")
+                    EventHandler.send(SnackBar("Email cannot be empty"))
                     return
                 } else if(password.isNullOrEmpty()) {
                     _state.update{ newState -> newState.copy(password = newState.password.copy(error = "password is required")) }
-                    SnackBarEvent.send("Password cannot be empty")
+                    EventHandler.send(SnackBar(("Password cannot be empty")))
                     return
                 }
                 ServiceLocator.getAuthenticator().signUp(email, password){ result: Result ->
                     when(result){
-                        is Result.Failure -> SnackBarEvent.send(result.error?.message.toString())
+                        is Result.Failure -> EventHandler.send(SnackBar(result.error?.message.toString()))
                         is Result.Success<*> -> {
                             viewModelScope.launch(Dispatchers.IO) {
-                                ProgressBarEvent.send(true)
+                                EventHandler.send(ProgressBar(true))
                                 val authResult = result.data as AuthResult
-                                saveUserInfo(
+                                UserRepositoryImpl.getInstance().saveUser(
                                     User(
                                         userId = authResult.user?.uid.toString(),
                                         email = authResult.user?.email.toString(),
@@ -64,19 +69,16 @@ class RegistrationViewModel: ViewModel() {
                                         profilePicture = null
                                     )
                                 )
-                                ProgressBarEvent.send(false)
+                                EventHandler.send(ProgressBar(false))
+                                EventHandler.send(PopBackStack)
+                                EventHandler.send(Navigate(Home))
                             }
                         }
                     }
-                    ProgressBarEvent.send(false)
+                    EventHandler.send(ProgressBar(false))
                 }
             }
-
+            else -> EventHandler.send(event)
         }
     }
-
-    private suspend fun saveUserInfo(user: User) {
-        UserRepositoryImpl.getInstance().saveUser(user)
-    }
-
 }

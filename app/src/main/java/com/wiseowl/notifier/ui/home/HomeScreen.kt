@@ -22,9 +22,10 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.wiseowl.notifier.ui.Navigate
 import com.wiseowl.notifier.ui.home.component.Rules
-import com.wiseowl.notifier.ui.home.model.HomeEvent
 import com.wiseowl.notifier.ui.home.model.HomeState
+import com.wiseowl.notifier.ui.navigation.AddRule
 
 @Preview
 @Composable
@@ -62,7 +63,7 @@ fun HomeScreen(
             modifier = Modifier
                 .align(Alignment.End)
                 .padding(20.dp),
-            onClick = { viewModel.onEvent(HomeEvent.CreateRule) }
+            onClick = { viewModel.onEvent(Navigate(AddRule)) }
         ) { Icon(imageVector = Icons.Default.Add, contentDescription = "Add Rule") }
     }
 }

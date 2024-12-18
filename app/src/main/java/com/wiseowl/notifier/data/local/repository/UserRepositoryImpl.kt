@@ -8,7 +8,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.async
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.Flow
 
 class UserRepositoryImpl private constructor(): UserRepository {
     private val local = NotifierDataStore
@@ -16,12 +16,12 @@ class UserRepositoryImpl private constructor(): UserRepository {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
 
     override suspend fun saveUser(user: User) {
-        remote.saveNewUser(user)
+        remote.saveUser(user)
         local.saveUser(user)
     }
 
-    override suspend fun getUser(): User {
-        return scope.async { local.getUser().first() }.await()
+    override fun getUser(): Flow<User> {
+        return local.getUser()
     }
 
     override suspend fun getUserById(id: String): User {

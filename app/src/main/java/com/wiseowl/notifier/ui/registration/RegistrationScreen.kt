@@ -24,11 +24,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.wiseowl.notifier.ui.registration.model.RegistrationEvent
-import com.wiseowl.notifier.ui.registration.model.RegistrationState
-import com.wiseowl.notifier.ui.navigation.Home
-import com.wiseowl.notifier.ui.navigation.Navigate
-import com.wiseowl.notifier.ui.navigation.Navigator
-import kotlinx.coroutines.launch
 
 @Composable
 fun RegistrationScreen(

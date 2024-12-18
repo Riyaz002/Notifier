@@ -5,20 +5,19 @@ import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.AuthResult
 import com.wiseowl.notifier.data.local.repository.UserRepositoryImpl
 import com.wiseowl.notifier.data.ServiceLocator
-import com.wiseowl.notifier.domain.event.ProgressBarEvent
+import com.wiseowl.notifier.domain.event.EventHandler
 import com.wiseowl.notifier.domain.util.Result
-import com.wiseowl.notifier.domain.event.SnackBarEvent
+import com.wiseowl.notifier.ui.Event
+import com.wiseowl.notifier.ui.Navigate
+import com.wiseowl.notifier.ui.PopBackStack
+import com.wiseowl.notifier.ui.ProgressBar
+import com.wiseowl.notifier.ui.SnackBar
 import com.wiseowl.notifier.ui.login.model.LoginEvent
 import com.wiseowl.notifier.ui.login.model.LoginState
-import com.wiseowl.notifier.ui.navigation.Action
 import com.wiseowl.notifier.ui.navigation.Home
-import com.wiseowl.notifier.ui.navigation.Navigate
-import com.wiseowl.notifier.ui.navigation.Navigator
-import com.wiseowl.notifier.ui.navigation.Pop
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -26,18 +25,7 @@ class LoginViewModel: ViewModel() {
     private val _state = MutableStateFlow(LoginState())
     val state: StateFlow<LoginState> get() = _state
 
-    init {
-        viewModelScope.launch {
-            state.collectLatest {
-                if(it.isUserLoggedIn) {
-                    Navigator.popBackStack(Pop())
-                    Navigator.navigate(Navigate(Home))
-                }
-            }
-        }
-    }
-
-    fun onEvent(event: LoginEvent){
+    fun onEvent(event: Event){
         when(event){
             is LoginEvent.EditUserName -> {
                 viewModelScope.launch {
@@ -52,18 +40,20 @@ class LoginViewModel: ViewModel() {
             }
 
             is LoginEvent.Login -> {
-                ProgressBarEvent.send(true)
+                EventHandler.send(ProgressBar(true))
                 ServiceLocator.getAuthenticator().signIn(event.email, event.password){ result: Result ->
                     when(result){
-                        is Result.Failure -> SnackBarEvent.send(result.error?.message.toString())
+                        is Result.Failure -> EventHandler.send(SnackBar(result.error?.message.toString()))
                         is Result.Success<*> -> {
                             saveUserInfo(result.data as AuthResult)
-                            _state.update{ loginState -> loginState.copy(isUserLoggedIn = true) }
+                            EventHandler.send(PopBackStack)
+                            EventHandler.send(Navigate(Home))
                         }
                     }
-                    ProgressBarEvent.send(false)
+                    EventHandler.send(ProgressBar(false))
                 }
             }
+            else -> EventHandler.send(event)
         }
     }
 

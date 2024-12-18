@@ -1,6 +1,7 @@
 package com.wiseowl.notifier.ui.home.model
 
-sealed interface HomeEvent{
-    data object CreateRule: HomeEvent
-    data class DeleteRule(val ruleId: Int) : HomeEvent
+import com.wiseowl.notifier.ui.Event
+
+sealed class HomeEvent: Event(){
+    data class DeleteRule(val ruleId: Int) : HomeEvent()
 }
