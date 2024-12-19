@@ -2,7 +2,7 @@ package com.wiseowl.notifier.data.local.repository
 
 import com.wiseowl.notifier.data.local.FirebaseFireStore
 import com.wiseowl.notifier.data.local.NotifierDataStore
-import com.wiseowl.notifier.domain.UserRepository
+import com.wiseowl.notifier.domain.repository.UserRepository
 import com.wiseowl.notifier.domain.model.User
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -36,7 +36,7 @@ class UserRepositoryImpl private constructor(): UserRepository {
     companion object{
         private var INSTANCE: UserRepository? = null
 
-        fun getInstance(): UserRepository{
+        fun getInstance(): UserRepository {
             return INSTANCE ?: synchronized(this){
                 INSTANCE = UserRepositoryImpl()
                 return INSTANCE!!

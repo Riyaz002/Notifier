@@ -1,4 +1,4 @@
-package com.wiseowl.notifier.domain
+package com.wiseowl.notifier.domain.account
 
 import com.wiseowl.notifier.domain.util.Result
 import com.wiseowl.notifier.domain.exception.SignInException

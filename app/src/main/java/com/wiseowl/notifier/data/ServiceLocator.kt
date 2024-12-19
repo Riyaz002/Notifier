@@ -4,8 +4,8 @@ import android.content.Context
 import com.wiseowl.notifier.data.local.NotifierDatabase
 import com.wiseowl.notifier.data.local.repository.RulesRepositoryImpl
 import com.wiseowl.notifier.data.local.repository.UserRepositoryImpl
-import com.wiseowl.notifier.domain.Authenticator
-import com.wiseowl.notifier.service.authentication.FirebaseAuthenticator
+import com.wiseowl.notifier.domain.account.Authenticator
+import com.wiseowl.notifier.data.service.authentication.FirebaseAuthenticator
 
 object ServiceLocator {
     private val authenticator = FirebaseAuthenticator()

@@ -2,8 +2,10 @@ package com.wiseowl.notifier
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -26,11 +28,16 @@ import com.wiseowl.notifier.ui.navigation.Login
 import com.wiseowl.notifier.ui.navigation.Root
 import com.wiseowl.notifier.ui.theme.NotifierTheme
 import androidx.compose.ui.Alignment
+import androidx.lifecycle.lifecycleScope
 import com.wiseowl.notifier.data.local.NotifierDataStore
 import com.wiseowl.notifier.domain.event.EventHandler
+import com.wiseowl.notifier.data.service.location.LocationService
+import com.wiseowl.notifier.ui.Navigate
 import com.wiseowl.notifier.ui.PopBackStack
 import com.wiseowl.notifier.ui.ProgressBar
 import com.wiseowl.notifier.ui.SnackBar
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
@@ -39,6 +46,8 @@ class MainActivity : ComponentActivity() {
 
         NotifierDataStore.initialize(this.application)
         ServiceLocator.initialize(this.application)
+        val requestLauncher = registerForActivityResult(contract = ActivityResultContracts.RequestMultiplePermissions())
+        requestLauncher.launch(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION,android.Manifest.permission.ACCESS_COARSE_LOCATION))
 
         enableEdgeToEdge()
         setContent {
@@ -49,18 +58,15 @@ class MainActivity : ComponentActivity() {
             var padding by remember { mutableStateOf(PaddingValues()) }
             val isLoggedIn = ServiceLocator.getAuthenticator().isLoggedIn()
             val currentScreen = if(isLoggedIn) Home else Login
-
-            LaunchedEffect(key1 = true) {
-                EventHandler.subscribe { event ->
-                    when(event){
-                        is SnackBar -> coroutineScope.launch {
-                            snackBarHost.currentSnackbarData?.dismiss()
-                            snackBarHost.showSnackbar(event.text)
-                        }
-                        is com.wiseowl.notifier.ui.Navigate -> navController.navigate(event.screen)
-                        is PopBackStack -> navController.popBackStack()
-                        is ProgressBar -> progressBarVisibility = event.show
+            EventHandler.subscribe { event ->
+                when(event){
+                    is SnackBar -> coroutineScope.launch {
+                        snackBarHost.currentSnackbarData?.dismiss()
+                        snackBarHost.showSnackbar(event.text)
                     }
+                    is Navigate -> navController.navigate(event.screen)
+                    is PopBackStack -> navController.popBackStack()
+                    is ProgressBar -> progressBarVisibility = event.show
                 }
             }
             NotifierTheme {

@@ -1,8 +1,8 @@
-package com.wiseowl.notifier.service.authentication
+package com.wiseowl.notifier.data.service.authentication
 
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
-import com.wiseowl.notifier.domain.Authenticator
+import com.wiseowl.notifier.domain.account.Authenticator
 import com.wiseowl.notifier.domain.util.Result
 
 class FirebaseAuthenticator: Authenticator {

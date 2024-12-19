@@ -16,7 +16,7 @@ abstract class NotifierDatabase: RoomDatabase() {
         private const val NAME = "notifier.db"
 
         @Volatile
-        var INSTANCE: NotifierDatabase? = null
+        private var INSTANCE: NotifierDatabase? = null
 
         fun getInstance(context: Context): NotifierDatabase {
             return INSTANCE ?: synchronized(this){

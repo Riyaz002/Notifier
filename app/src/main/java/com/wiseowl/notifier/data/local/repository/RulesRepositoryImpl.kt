@@ -3,7 +3,7 @@ package com.wiseowl.notifier.data.local.repository
 import com.wiseowl.notifier.data.local.Dao
 import com.wiseowl.notifier.data.local.entity.RuleEntity.Companion.toRule
 import com.wiseowl.notifier.data.local.entity.RuleEntity.Companion.toRuleEntity
-import com.wiseowl.notifier.domain.RulesRepository
+import com.wiseowl.notifier.domain.repository.RulesRepository
 import com.wiseowl.notifier.domain.model.Rule
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map

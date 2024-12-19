@@ -1,4 +1,4 @@
-package com.wiseowl.notifier.domain
+package com.wiseowl.notifier.domain.repository
 
 import com.wiseowl.notifier.domain.model.Rule
 import kotlinx.coroutines.flow.Flow
