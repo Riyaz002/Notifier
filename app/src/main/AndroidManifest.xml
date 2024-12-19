@@ -20,6 +20,10 @@
         <meta-data  android:name="com.wiseowl.notifier.notification_color"
             android:resource="@color/black"/>
 
+        <meta-data
+            android:name="com.riyaz.dakiya.Notification_Small_Icon"
+            android:resource="@drawable/ic_launcher_foreground" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

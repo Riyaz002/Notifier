@@ -2,7 +2,6 @@ package com.wiseowl.notifier
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
@@ -13,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,25 +26,36 @@ import com.wiseowl.notifier.ui.navigation.Login
 import com.wiseowl.notifier.ui.navigation.Root
 import com.wiseowl.notifier.ui.theme.NotifierTheme
 import androidx.compose.ui.Alignment
-import androidx.lifecycle.lifecycleScope
+import androidx.work.PeriodicWorkRequest
+import androidx.work.WorkManager
 import com.wiseowl.notifier.data.local.NotifierDataStore
+import com.wiseowl.notifier.data.service.worker.NotifierWorker
+import com.wiseowl.notifier.data.service.worker.NotifierWorker.Companion.UUID_STRING
 import com.wiseowl.notifier.domain.event.EventHandler
-import com.wiseowl.notifier.data.service.location.LocationService
 import com.wiseowl.notifier.ui.Navigate
 import com.wiseowl.notifier.ui.PopBackStack
 import com.wiseowl.notifier.ui.ProgressBar
 import com.wiseowl.notifier.ui.SnackBar
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.util.UUID
+import java.util.concurrent.TimeUnit
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         NotifierDataStore.initialize(this.application)
         ServiceLocator.initialize(this.application)
-        val requestLauncher = registerForActivityResult(contract = ActivityResultContracts.RequestMultiplePermissions())
+
+        val requestLauncher = registerForActivityResult(contract = ActivityResultContracts.RequestMultiplePermissions()){ result ->
+            if(!result.containsValue(false)){
+                val workRequest: PeriodicWorkRequest = PeriodicWorkRequest.Builder(
+                    NotifierWorker::class.java,
+                    PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS,
+                    TimeUnit.MILLISECONDS).setId(UUID.fromString(UUID_STRING)
+                ).build()
+                WorkManager.getInstance(applicationContext).enqueue(workRequest)
+            } else WorkManager.getInstance(applicationContext).cancelWorkById(UUID.fromString("1"))
+        }
         requestLauncher.launch(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION,android.Manifest.permission.ACCESS_COARSE_LOCATION))
 
         enableEdgeToEdge()

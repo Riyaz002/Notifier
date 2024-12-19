@@ -127,6 +127,7 @@ dependencies {
     implementation(libs.androidx.datastore)
     implementation(libs.androidx.datastore.preference)
     implementation(libs.androidx.workmanager)
+    implementation(libs.dakiya)
 
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.27.0")
 

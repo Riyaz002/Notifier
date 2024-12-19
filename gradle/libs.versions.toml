@@ -1,5 +1,6 @@
 [versions]
 agp = "8.5.0"
+dakiya = "0.4.5-alpha"
 firebaseBom = "33.5.1"
 kotlin = "2.0.21"
 playServicesLocation = "21.3.0"
@@ -22,6 +23,7 @@ work = "2.9.1"
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+dakiya = { module = "com.github.Riyaz002:Dakiya", version.ref = "dakiya" }
 firebase-bom = { module = "com.google.firebase:firebase-bom", version.ref = "firebaseBom" }
 firebase-auth = { module = "com.google.firebase:firebase-auth" }
 firebase-firestore = { module = "com.google.firebase:firebase-firestore" }
