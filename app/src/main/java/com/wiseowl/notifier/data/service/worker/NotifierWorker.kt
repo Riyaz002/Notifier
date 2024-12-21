@@ -8,7 +8,7 @@ import androidx.work.WorkerParameters
 import com.riyaz.dakiya.Dakiya
 import com.riyaz.dakiya.core.model.Message
 import com.riyaz.dakiya.core.notification.Style
-import com.wiseowl.notifier.data.local.NotifierDatabase
+import com.wiseowl.notifier.data.local.database.NotifierDatabase
 import com.wiseowl.notifier.data.service.location.LocationService
 import com.wiseowl.notifier.data.util.LocationDistanceCalculator
 import com.wiseowl.notifier.domain.model.ActionType

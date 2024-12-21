@@ -3,7 +3,7 @@ package com.wiseowl.notifier.ui.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.AuthResult
-import com.wiseowl.notifier.data.local.repository.UserRepositoryImpl
+import com.wiseowl.notifier.data.repository.UserRepositoryImpl
 import com.wiseowl.notifier.data.ServiceLocator
 import com.wiseowl.notifier.domain.event.EventHandler
 import com.wiseowl.notifier.domain.util.Result

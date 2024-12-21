@@ -1,4 +1,4 @@
-package com.wiseowl.notifier.data.local
+package com.wiseowl.notifier.data.local.database
 
 import androidx.room.TypeConverter
 import com.wiseowl.notifier.domain.model.Location

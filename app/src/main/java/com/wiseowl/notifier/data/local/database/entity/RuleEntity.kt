@@ -1,4 +1,4 @@
-package com.wiseowl.notifier.data.local.entity
+package com.wiseowl.notifier.data.local.database.entity
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey

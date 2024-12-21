@@ -9,3 +9,9 @@ plugins {
     alias(libs.plugins.serialization) apply false
     alias(libs.plugins.protobuf) apply false
 }
+
+buildscript {
+    dependencies{
+        classpath(libs.secrets.gradle.plugin)
+    }
+}

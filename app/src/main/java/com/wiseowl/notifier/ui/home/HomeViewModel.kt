@@ -21,7 +21,10 @@ class HomeViewModel: ViewModel() {
             ServiceLocator.getUserRepository().getUser().collect{
                 _state.update { state -> state.copy(user = it) }
             }
-            ServiceLocator.getRulesRepository().getRules().collect{
+        }
+
+        viewModelScope.launch {
+            ServiceLocator.getRulesRepository().getRules().collect {
                 _state.update { state -> state.copy(rules = it) }
             }
         }

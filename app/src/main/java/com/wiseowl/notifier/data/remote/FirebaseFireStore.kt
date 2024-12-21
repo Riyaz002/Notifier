@@ -1,4 +1,4 @@
-package com.wiseowl.notifier.data.local
+package com.wiseowl.notifier.data.remote
 
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase

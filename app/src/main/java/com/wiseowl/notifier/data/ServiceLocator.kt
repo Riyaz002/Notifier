@@ -1,9 +1,9 @@
 package com.wiseowl.notifier.data
 
 import android.content.Context
-import com.wiseowl.notifier.data.local.NotifierDatabase
-import com.wiseowl.notifier.data.local.repository.RulesRepositoryImpl
-import com.wiseowl.notifier.data.local.repository.UserRepositoryImpl
+import com.wiseowl.notifier.data.local.database.NotifierDatabase
+import com.wiseowl.notifier.data.repository.RulesRepositoryImpl
+import com.wiseowl.notifier.data.repository.UserRepositoryImpl
 import com.wiseowl.notifier.domain.account.Authenticator
 import com.wiseowl.notifier.data.service.authentication.FirebaseAuthenticator
 

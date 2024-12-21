@@ -1,4 +1,4 @@
-package com.wiseowl.notifier.data.local
+package com.wiseowl.notifier.data.local.datastore
 
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer

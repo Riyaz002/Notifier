@@ -11,6 +11,7 @@ plugins {
     alias(libs.plugins.google.sevice)
     alias(libs.plugins.serialization)
     alias(libs.plugins.protobuf)
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 val secret = Properties()
@@ -31,7 +32,8 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-        resValue("string", "google_api", secret["GOOGLE_API"].toString())
+//        resValue("string", "google_api", secret["GOOGLE_API_KEY"].toString())
+//        resValue("string", "map_api", secret["MAPS_API_KEY"].toString())
     }
 
     buildTypes {
@@ -64,6 +66,13 @@ android {
                 srcDirs("src/main/assets")
             }
         }
+    }
+    secrets{
+        propertiesFileName = "secret.properties"
+
+        // A properties file containing default secret values. This file can be
+        // checked in version control.
+        //defaultPropertiesFileName = "local.defaults.properties"
     }
 }
 
@@ -129,12 +138,27 @@ dependencies {
     implementation(libs.androidx.workmanager)
     implementation(libs.dakiya)
 
-    implementation("com.google.accompanist:accompanist-systemuicontroller:0.27.0")
-
+    implementation(libs.accompanist.systemuicontroller)
     // Starting from Protobuf 3.8.0, use the lite runtime library
-    implementation("com.google.protobuf:protobuf-javalite:3.21.11")
-    implementation("com.google.protobuf:protobuf-kotlin-lite:3.21.11")
+    implementation(libs.protobuf.javalite)
+    implementation(libs.protobuf.kotlin.lite)
 
     //Location
     implementation(libs.play.services.location)
+
+    //maps
+    // Google Maps SDK -- these are here for the data model.  Remove these dependencies and replace
+    // with the compose versions.
+    implementation(libs.play.services.maps)
+    // KTX for the Maps SDK for Android library
+    implementation(libs.maps.ktx)
+    // KTX for the Maps SDK for Android Utility Library
+    implementation(libs.maps.utils.ktx)
+
+    // Google Maps Compose library
+    implementation(libs.maps.compose)
+    // Google Maps Compose utility library
+    implementation(libs.maps.compose.utils)
+    // Google Maps Compose widgets library
+    implementation(libs.maps.compose.widgets)
 }

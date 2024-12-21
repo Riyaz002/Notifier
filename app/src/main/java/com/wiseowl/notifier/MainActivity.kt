@@ -28,7 +28,7 @@ import com.wiseowl.notifier.ui.theme.NotifierTheme
 import androidx.compose.ui.Alignment
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
-import com.wiseowl.notifier.data.local.NotifierDataStore
+import com.wiseowl.notifier.data.local.datastore.NotifierDataStore
 import com.wiseowl.notifier.data.service.worker.NotifierWorker
 import com.wiseowl.notifier.data.service.worker.NotifierWorker.Companion.UUID_STRING
 import com.wiseowl.notifier.domain.event.EventHandler

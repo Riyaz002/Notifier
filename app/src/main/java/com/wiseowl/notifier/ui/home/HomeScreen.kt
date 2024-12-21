@@ -1,5 +1,6 @@
 package com.wiseowl.notifier.ui.home
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -35,33 +36,35 @@ fun HomeScreen(
 ) {
     val state = viewModel.state.collectAsState(initial = HomeState())
 
-    Column(modifier = modifier.padding(16.dp)) {
-        Text(
-            modifier = Modifier,
-            text = buildAnnotatedString {
-                append("Welcome\n")
-                withStyle(style = SpanStyle(fontSize = 72.sp)){
-                    append(state.value.user?.firstName)
-                }
-            },
-            style = TextStyle(
-                color = MaterialTheme.colorScheme.primary,
-                fontSize = 34.sp,
-                fontWeight = FontWeight.Bold
+    Box(modifier) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(
+                modifier = Modifier,
+                text = buildAnnotatedString {
+                    append("Welcome\n")
+                    withStyle(style = SpanStyle(fontSize = 72.sp)){
+                        append(state.value.user?.firstName)
+                    }
+                },
+                style = TextStyle(
+                    color = MaterialTheme.colorScheme.primary,
+                    fontSize = 34.sp,
+                    fontWeight = FontWeight.Bold
+                )
             )
-        )
 
-        Rules(
-            modifier = Modifier
-                .fillMaxHeight()
-                .weight(1f),
-            rules = state.value.rules,
-            onEvent = viewModel::onEvent
-        )
+            Rules(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .weight(1f),
+                rules = state.value.rules,
+                onEvent = viewModel::onEvent
+            )
+        }
 
         FloatingActionButton(
             modifier = Modifier
-                .align(Alignment.End)
+                .align(Alignment.BottomEnd)
                 .padding(20.dp),
             onClick = { viewModel.onEvent(Navigate(AddRule)) }
         ) { Icon(imageVector = Icons.Default.Add, contentDescription = "Add Rule") }
