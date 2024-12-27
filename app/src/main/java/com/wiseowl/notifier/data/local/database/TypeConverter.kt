@@ -16,4 +16,16 @@ object TypeConverter {
             Place(get(0), Location(get(1).toDouble(), get(2).toDouble()))
         }
     }
+
+    @TypeConverter
+    fun fromLocation(location: Location): String{
+        return "${location.latitude}:${location.longitude}"
+    }
+
+    @TypeConverter
+    fun toLocation(location: String): Location{
+        return location.split(":").run {
+            Location(first().toDouble(), last().toDouble())
+        }
+    }
 }

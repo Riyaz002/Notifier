@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "a94aa60402a95426b6c7c92ac72e3c1e",
+    "identityHash": "32cf215eef8895641e43f1c313b4ae97",
     "entities": [
       {
         "tableName": "rules_table",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL, `description` TEXT, `place` TEXT NOT NULL, `radiusInMeter` INTEGER NOT NULL, `active` INTEGER NOT NULL, `actionType` TEXT NOT NULL, `delayInMinutes` INTEGER NOT NULL)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `title` TEXT NOT NULL, `description` TEXT, `location` TEXT NOT NULL, `radiusInMeter` INTEGER NOT NULL, `active` INTEGER NOT NULL, `actionType` TEXT NOT NULL, `delayInMinutes` INTEGER NOT NULL)",
         "fields": [
           {
             "fieldPath": "id",
@@ -27,8 +27,8 @@
             "notNull": false
           },
           {
-            "fieldPath": "place",
-            "columnName": "place",
+            "fieldPath": "location",
+            "columnName": "location",
             "affinity": "TEXT",
             "notNull": true
           },
@@ -70,7 +70,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a94aa60402a95426b6c7c92ac72e3c1e')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '32cf215eef8895641e43f1c313b4ae97')"
     ]
   }
 }

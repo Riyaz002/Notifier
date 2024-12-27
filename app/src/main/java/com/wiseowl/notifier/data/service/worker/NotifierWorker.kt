@@ -16,7 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
 
 class NotifierWorker(context: Context, parameters: WorkerParameters): CoroutineWorker(context, parameters) {
-    private val locationService = LocationService(context)
+    private val locationService = LocationService.getInstance(context)
     override suspend fun doWork(): Result {
         val location = locationService.getCurrentLocation(applicationContext, Dispatchers.IO) ?: return Result.failure()
         val longitude = location.longitude
@@ -25,7 +25,7 @@ class NotifierWorker(context: Context, parameters: WorkerParameters): CoroutineW
         val rules = NotifierDatabase.getInstance(applicationContext).dao.getRules().firstOrNull() ?: return Result.failure()
 
         rules.forEach { rule ->
-            val ruleLongitude = rule.place.location.longitude
+            val ruleLongitude = rule.location.longitude
             val ruleLatitude = rule.place.location.latitude
             val distanceInMeters = LocationDistanceCalculator(longitude, latitude, ruleLongitude, ruleLatitude).getDistanceFromLatLonInMeters()
             val isInRange = (distanceInMeters - rule.radiusInMeter) < 0

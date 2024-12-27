@@ -21,14 +21,21 @@ import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
-class LocationService(context: Context) {
+const val LOCATION_FETCH_BACKOFF_TIME_MILLS = 1*60*1000
+
+class LocationService private constructor(context: Context) {
     val coroutineScope = CoroutineScope(SupervisorJob())
     private val fusedLocationProviderClient: FusedLocationProviderClient by lazy {
         LocationServices.getFusedLocationProviderClient(context)
     }
+    private var lastFetchedLocation: Location? = null
+    private var lastFetchedTime: Long = 0
 
     suspend fun getCurrentLocation(context: Context, dispatcher: CoroutineDispatcher): Location? {
         if(ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) throw SecurityException("Location permission not granted")
+        if(lastFetchedLocation!=null && (System.currentTimeMillis()-lastFetchedTime)<LOCATION_FETCH_BACKOFF_TIME_MILLS){
+            return lastFetchedLocation
+        }
         val result = fusedLocationProviderClient.getCurrentLocation(
             CurrentLocationRequest.Builder().setPriority(Priority.PRIORITY_BALANCED_POWER_ACCURACY).build(),
             null
@@ -36,7 +43,8 @@ class LocationService(context: Context) {
         if(result==null) return null
         val longitude = result.longitude
         val latitude = result.latitude
-        return Location(longitude, latitude)
+        lastFetchedLocation = Location(longitude, latitude)
+        return lastFetchedLocation
     }
 
     fun getLocationUpdates(context: Context, dispatcher: CoroutineDispatcher): Flow<Location> {
@@ -56,6 +64,17 @@ class LocationService(context: Context) {
                 },
                 null)
             awaitClose()
+        }
+    }
+
+    companion object{
+        @Volatile private var INSTANCE: LocationService? = null
+
+        fun getInstance(context: Context): LocationService{
+            return INSTANCE ?: synchronized(this){
+                INSTANCE = LocationService(context)
+                INSTANCE!!
+            }
         }
     }
 }

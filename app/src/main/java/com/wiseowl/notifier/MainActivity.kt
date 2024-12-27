@@ -32,6 +32,7 @@ import com.wiseowl.notifier.data.local.datastore.NotifierDataStore
 import com.wiseowl.notifier.data.service.worker.NotifierWorker
 import com.wiseowl.notifier.data.service.worker.NotifierWorker.Companion.UUID_STRING
 import com.wiseowl.notifier.domain.event.EventHandler
+import com.wiseowl.notifier.domain.exception.UnhandledEventException
 import com.wiseowl.notifier.ui.Navigate
 import com.wiseowl.notifier.ui.PopBackStack
 import com.wiseowl.notifier.ui.ProgressBar
@@ -76,6 +77,7 @@ class MainActivity : ComponentActivity() {
                     is Navigate -> navController.navigate(event.screen)
                     is PopBackStack -> navController.popBackStack()
                     is ProgressBar -> progressBarVisibility = event.show
+                    else -> throw UnhandledEventException(event::class.simpleName.toString())
                 }
             }
             NotifierTheme {

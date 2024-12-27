@@ -51,6 +51,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -161,4 +162,9 @@ dependencies {
     implementation(libs.maps.compose.utils)
     // Google Maps Compose widgets library
     implementation(libs.maps.compose.widgets)
+
+
+    //places
+//  implementation(platform("org.jetbrains.kotlin:kotlin-bom:$kotlin_version"))
+    implementation(libs.places)    
 }

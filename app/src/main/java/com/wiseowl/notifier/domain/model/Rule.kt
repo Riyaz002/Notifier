@@ -4,7 +4,7 @@ data class Rule(
     val id: Int = 0,
     val name: String,
     val description: String?,
-    val place: Place?,
+    val location: Location,
     val radiusInMeter: Int = 10,
     val active: Boolean?,
     val actionType: ActionType?,

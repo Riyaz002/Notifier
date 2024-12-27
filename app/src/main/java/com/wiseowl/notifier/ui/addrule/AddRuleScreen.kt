@@ -4,25 +4,35 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.AbsoluteCutCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.wiseowl.notifier.domain.model.Location
-import com.wiseowl.notifier.domain.model.Place
+import com.wiseowl.notifier.data.ServiceLocator
+import com.wiseowl.notifier.ui.addrule.component.LocationSelector
 import com.wiseowl.notifier.ui.addrule.model.AddRuleEvent
+import com.wiseowl.notifier.ui.addrule.model.AddRuleUIEvent
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collectLatest
+
 
 @Preview
 @Composable
@@ -31,11 +41,38 @@ fun AddRuleScreen(
     viewModel: AddRuleViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
 ) {
     val state by viewModel.state.collectAsState()
+    val context = LocalContext.current
 
-    Box(modifier = modifier
-        .fillMaxSize()
-        .padding(16.dp)) {
-        Column {
+    LaunchedEffect(key1 = true) {
+        viewModel.uiEvent.collectLatest {
+            when (it) {
+                is AddRuleUIEvent.SearchPlace -> {
+                    val location = ServiceLocator.getLocationService().getCurrentLocation(context, Dispatchers.IO)
+                    if (location != null) {
+                        viewModel.onEvent(
+                            AddRuleEvent.OnSuggestionUpdated(
+                                ServiceLocator.getPlacesService().getNearbyPlacesForQuery(it.searchKey, location)
+                            )
+                        )
+                    }
+                }
+            }
+        }
+    }
+    LaunchedEffect(key1 = true) {
+        ServiceLocator.getLocationService().getLocationUpdates(context, Dispatchers.IO).collectLatest {
+            viewModel.onEvent(AddRuleEvent.OnCurrentLocationUpdate(it))
+        }
+    }
+
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp)
+    ) {
+        Column(
+            modifier = Modifier.verticalScroll(rememberScrollState())
+        ) {
             Text(
                 modifier = Modifier,
                 text = "Add Rule",
@@ -67,25 +104,17 @@ fun AddRuleScreen(
                     .padding(top = 16.dp)
             )
 
-            OutlinedTextField(
-                value = state.place.value.toString(),
-                shape = AbsoluteCutCornerShape(0.dp),
-                singleLine = true,
-                label = { Text(state.place.label) },
-                onValueChange = {
-                    viewModel.onEvent(
-                        AddRuleEvent.OnChangeRulePlace(
-                            Place(
-                                "Place",
-                                Location(0.0, 0.0)
-                            )
-                        )
-                    )
-                },
-                isError = !state.place.error.isNullOrEmpty(),
+            LocationSelector(
                 modifier = Modifier
+                    .height(OutlinedTextFieldDefaults.MinHeight)
                     .fillMaxWidth()
-                    .padding(top = 16.dp)
+                    .padding(top = 16.dp),
+                value = state.selectedPlaceName.value.toString(),
+                label = state.selectedPlaceName.label,
+                suggestions = state.suggestions,
+                currentLocation = state.currentLocation,
+                error = state.selectedPlaceName.error.toString(),
+                onEvent = (viewModel)::onEvent
             )
 
             OutlinedTextField(
