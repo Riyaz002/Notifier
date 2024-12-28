@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "${GOOGLE_API_KEY}"
+          "current_key": "@string/google_api"
         }
       ],
       "services": {

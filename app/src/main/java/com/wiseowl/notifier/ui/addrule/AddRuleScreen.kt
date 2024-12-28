@@ -1,25 +1,29 @@
 package com.wiseowl.notifier.ui.addrule
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.AbsoluteCutCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -32,6 +36,7 @@ import com.wiseowl.notifier.ui.addrule.model.AddRuleEvent
 import com.wiseowl.notifier.ui.addrule.model.AddRuleUIEvent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 
 @Preview
@@ -42,26 +47,30 @@ fun AddRuleScreen(
 ) {
     val state by viewModel.state.collectAsState()
     val context = LocalContext.current
+    val scope = rememberCoroutineScope()
 
     LaunchedEffect(key1 = true) {
+        scope.launch {
+            val location = ServiceLocator.getLocationService().getCurrentLocation(context, Dispatchers.IO)
+            location?.let {
+                viewModel.onEvent(
+                    AddRuleEvent.OnChangeRuleLocation(it)
+                )
+            }
+        }
         viewModel.uiEvent.collectLatest {
             when (it) {
                 is AddRuleUIEvent.SearchPlace -> {
                     val location = ServiceLocator.getLocationService().getCurrentLocation(context, Dispatchers.IO)
                     if (location != null) {
                         viewModel.onEvent(
-                            AddRuleEvent.OnSuggestionUpdated(
+                            AddRuleEvent.OnPlaceSuggestionUpdated(
                                 ServiceLocator.getPlacesService().getNearbyPlacesForQuery(it.searchKey, location)
                             )
                         )
                     }
                 }
             }
-        }
-    }
-    LaunchedEffect(key1 = true) {
-        ServiceLocator.getLocationService().getLocationUpdates(context, Dispatchers.IO).collectLatest {
-            viewModel.onEvent(AddRuleEvent.OnCurrentLocationUpdate(it))
         }
     }
 
@@ -103,19 +112,35 @@ fun AddRuleScreen(
                     .fillMaxWidth()
                     .padding(top = 16.dp)
             )
+             OutlinedTextField(
+                 value = state.selectedPlaceName.value.toString(),
+                 shape = AbsoluteCutCornerShape(0.dp),
+                 singleLine = true,
+                 label = { Text(state.selectedPlaceName.label) },
+                 onValueChange = {  },
+                 enabled = state.selectedPlaceName.enabled,
+                 isError = !state.selectedPlaceName.error.isNullOrEmpty(),
+                 modifier = Modifier
+                     .fillMaxWidth()
+                     .padding(top = 16.dp)
+                     .clickable { viewModel.onEvent(AddRuleEvent.OnClickSelectLocationField) }
+             )
 
-            LocationSelector(
-                modifier = Modifier
-                    .height(OutlinedTextFieldDefaults.MinHeight)
-                    .fillMaxWidth()
-                    .padding(top = 16.dp),
-                value = state.selectedPlaceName.value.toString(),
-                label = state.selectedPlaceName.label,
-                suggestions = state.suggestions,
-                currentLocation = state.currentLocation,
-                error = state.selectedPlaceName.error.toString(),
-                onEvent = (viewModel)::onEvent
-            )
+            AnimatedVisibility(visible = state.locationSelectorExpandedState){
+                LocationSelector(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 16.dp),
+                    value = state.selectedPlaceName.value.toString(),
+                    label = state.selectedPlaceName.label,
+                    suggestions = state.suggestions,
+                    placeName = state.selectedPlaceName.value,
+                    selectedLocation = state.selectedPlaceLocation,
+                    radius = state.ruleRadius.value,
+                    error = state.selectedPlaceName.error.toString(),
+                    onEvent = (viewModel)::onEvent
+                )
+            }
 
             OutlinedTextField(
                 value = state.ruleRadius.value.toString(),
@@ -123,7 +148,8 @@ fun AddRuleScreen(
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 label = { Text(state.ruleRadius.label) },
-                onValueChange = { viewModel.onEvent(AddRuleEvent.OnChangeRuleRadius(it.toInt())) },
+                onValueChange = { viewModel.onEvent(AddRuleEvent.OnChangeRuleRadius(it)) },
+                enabled = state.ruleRadius.enabled,
                 isError = !state.ruleName.error.isNullOrEmpty(),
                 modifier = Modifier
                     .fillMaxWidth()
@@ -147,11 +173,9 @@ fun AddRuleScreen(
         TextButton(
             modifier = Modifier
                 .fillMaxWidth()
-                .align(Alignment.BottomCenter),
-            shape = AbsoluteCutCornerShape(0.dp),
+                .align(Alignment.BottomCenter)
+                .background(color = MaterialTheme.colorScheme.primary),
             onClick = { viewModel.onEvent(AddRuleEvent.CreateRule) }
-        ) {
-            Text(text = "Create")
-        }
+        ) { Text(text = "Create", color = Color.White) }
     }
 }

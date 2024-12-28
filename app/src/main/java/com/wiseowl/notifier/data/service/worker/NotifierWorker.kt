@@ -26,7 +26,7 @@ class NotifierWorker(context: Context, parameters: WorkerParameters): CoroutineW
 
         rules.forEach { rule ->
             val ruleLongitude = rule.location.longitude
-            val ruleLatitude = rule.place.location.latitude
+            val ruleLatitude = rule.location.latitude
             val distanceInMeters = LocationDistanceCalculator(longitude, latitude, ruleLongitude, ruleLatitude).getDistanceFromLatLonInMeters()
             val isInRange = (distanceInMeters - rule.radiusInMeter) < 0
             val message = Message(
@@ -36,9 +36,9 @@ class NotifierWorker(context: Context, parameters: WorkerParameters): CoroutineW
             )
 
             if(isInRange && rule.actionType == ActionType.ENTERING){
-                Dakiya.showNotification(message.copy(subtitle = "This is the reminder for ${rule.title} since your have entered ${rule.place.name}"))
+                Dakiya.showNotification(message.copy(subtitle = "This is the reminder for ${rule.title} since your have entered the location"))
             } else if(!isInRange && rule.actionType == ActionType.LEAVING){
-                Dakiya.showNotification(message.copy(subtitle = "This is the reminder for ${rule.title} since your have left ${rule.place.name}"))
+                Dakiya.showNotification(message.copy(subtitle = "This is the reminder for ${rule.title} since your have left the location"))
             }
         }
         return Result.success()

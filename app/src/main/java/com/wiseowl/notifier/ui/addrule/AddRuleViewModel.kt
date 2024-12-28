@@ -2,10 +2,8 @@ package com.wiseowl.notifier.ui.addrule
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.protobuf.value
 import com.wiseowl.notifier.data.ServiceLocator
 import com.wiseowl.notifier.domain.event.EventHandler
-import com.wiseowl.notifier.domain.model.Place
 import com.wiseowl.notifier.domain.model.Rule
 import com.wiseowl.notifier.domain.util.RuleValidator
 import com.wiseowl.notifier.ui.Event
@@ -22,6 +20,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.math.roundToInt
 
 class AddRuleViewModel: ViewModel() {
     private val _state = MutableStateFlow(AddRuleState())
@@ -32,6 +31,31 @@ class AddRuleViewModel: ViewModel() {
 
     fun onEvent(event: Event){
         when(event){
+            is AddRuleEvent.OnChangeRuleActionType -> _state.update { state -> state.copy( actionType = state.actionType.copy(event.actionType)) }
+            is AddRuleEvent.OnChangeRuleDelay -> _state.update { state -> state.copy( ruleDelay = state.ruleDelay.copy(event.delayInMinutes)) }
+            is AddRuleEvent.OnChangeRuleDescription -> _state.update { state -> state.copy( ruleDescription = state.ruleDescription.copy(event.description))}
+            is AddRuleEvent.OnClickSelectLocationField -> _state.update { state -> state.copy(locationSelectorExpandedState = true) }
+            is AddRuleEvent.CloseLocationDialog -> _state.update { state -> state.copy(locationSelectorExpandedState = false) }
+            is AddRuleEvent.OnChangeRuleName -> _state.update { state -> state.copy( ruleName = state.ruleName.copy(event.name)) }
+            is AddRuleEvent.OnChangeRuleLocation -> _state.update { state -> state.copy(selectedPlaceLocation = event.location) }
+            is AddRuleEvent.OnPlaceSuggestionUpdated -> _state.update { state -> state.copy(suggestions = event.suggestions.orEmpty()) }
+            is AddRuleEvent.OnChangeRuleRadius -> {
+                val newRadius = event.radiusInMeters.toDoubleOrNull()?.roundToInt()?.toDouble()
+                _state.update { state -> state.copy( ruleRadius = state.ruleRadius.copy(newRadius)) }
+            }
+            is AddRuleEvent.OnQueryPlace -> viewModelScope.launch {
+                _state.update { state -> state.copy(selectedPlaceName = state.selectedPlaceName.updateValue(event.search)) }
+                _uiEvent.send(AddRuleUIEvent.SearchPlace(event.search))
+            }
+            is AddRuleEvent.OnSuggestionSelected -> {
+                viewModelScope.launch(Dispatchers.IO) {
+                    EventHandler.send(ProgressBar(true))
+                    val placeLocation = ServiceLocator.getPlacesService().getPlaceDetail(event.suggestion.placeId)
+                    _state.update { state -> state.copy(selectedPlaceLocation = placeLocation, suggestions = listOf()) }
+                    _state.update { state -> state.copy(selectedPlaceName = state.selectedPlaceName.updateValue(event.suggestion.fullText.toString()), suggestions = listOf()) }
+                    EventHandler.send(ProgressBar(false))
+                }
+            }
             is AddRuleEvent.CreateRule -> {
                 viewModelScope.launch{
                     val value = state.value
@@ -70,28 +94,6 @@ class AddRuleViewModel: ViewModel() {
                     }
                 }
             }
-            is AddRuleEvent.OnChangeRuleActionType -> _state.update { state -> state.copy( actionType = state.actionType.copy(event.actionType)) }
-            is AddRuleEvent.OnChangeRuleDelay -> _state.update { state -> state.copy( ruleDelay = state.ruleDelay.copy(event.delayInMinutes)) }
-            is AddRuleEvent.OnChangeRuleDescription -> _state.update { state -> state.copy( ruleDescription = state.ruleDescription.copy(event.description))}
-            is AddRuleEvent.OnChangeRulePlaceName -> _state.update { state -> state.copy(selectedPlaceName = state.selectedPlaceName.copy(event.placeName)) }
-            is AddRuleEvent.OnChangeRuleName -> _state.update { state -> state.copy( ruleName = state.ruleName.copy(event.name)) }
-            is AddRuleEvent.OnChangeRuleRadius -> _state.update { state -> state.copy( ruleRadius = state.ruleRadius.copy(event.radiusInMeters)) }
-            is AddRuleEvent.OnChangeRuleLocation -> _state.update { state -> state.copy(selectedPlaceLocation = event.location) }
-            is AddRuleEvent.OnQueryPlaces -> viewModelScope.launch {
-                _state.update { state -> state.copy(selectedPlaceName = state.selectedPlaceName.updateValue(event.search)) }
-                _uiEvent.send(AddRuleUIEvent.SearchPlace(event.search))
-            }
-            is AddRuleEvent.OnSuggestionUpdated -> _state.update { state -> state.copy(suggestions = event.suggestions.orEmpty()) }
-            is AddRuleEvent.OnSuggestionSelected -> {
-                viewModelScope.launch(Dispatchers.IO) {
-                    EventHandler.send(ProgressBar(true))
-                    val placeDetail = ServiceLocator.getPlacesService().getPlaceDetail(event.suggestion.placeId)
-                    _state.update { state -> state.copy(selectedPlaceLocation = placeDetail, suggestions = listOf()) }
-                    _state.update { state -> state.copy(selectedPlaceName = state.selectedPlaceName.updateValue(event.suggestion.fullText.toString()), suggestions = listOf()) }
-                    EventHandler.send(ProgressBar(false))
-                }
-            }
-            is AddRuleEvent.OnCurrentLocationUpdate -> _state.update { state -> state.copy(currentLocation = event.location) }
             else -> EventHandler.send(event)
         }
     }

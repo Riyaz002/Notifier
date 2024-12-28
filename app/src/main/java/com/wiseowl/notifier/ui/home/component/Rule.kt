@@ -48,7 +48,7 @@ import com.wiseowl.notifier.ui.home.model.HomeEvent
 @Composable
 @Preview
 fun Rule(
-    rule: Rule = Rule(1, "Title", "description", Place(name = "place name", location = Location(111.0,111.0)), 12, true, ActionType.LEAVING, 10),
+    rule: Rule = Rule(1, "Title", "description",location = Location(111.0,111.0), 12.0, true, ActionType.LEAVING, 10),
     onEvent: (HomeEvent) -> Unit = {}
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "")

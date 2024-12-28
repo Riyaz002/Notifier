@@ -13,7 +13,7 @@ data class RuleEntity(
     val title: String,
     val description: String?,
     val location: Location,
-    val radiusInMeter: Int,
+    val radiusInMeter: Double,
     val active: Boolean,
     val actionType: ActionType,
     val delayInMinutes: Int

@@ -7,11 +7,11 @@ import com.wiseowl.notifier.ui.common.model.InputField
 data class AddRuleState(
     val ruleName: InputField<String> = InputField(value = "", label = "name"),
     val ruleDescription: InputField<String> = InputField(value = "",label = "description"),
-    val selectedPlaceName: InputField<String> = InputField(value = "", label = "Place"),
+    val selectedPlaceName: InputField<String> = InputField(value = "", label = "Place", enabled = false),
+    val locationSelectorExpandedState: Boolean = false,
     val selectedPlaceLocation: Location? = null,
-    val currentLocation: Location = Location(77.0, 28.0),
     val suggestions: List<Suggestion> = listOf(),
     val actionType: InputField<ActionType> = InputField(value = ActionType.ENTERING, label = "action type"),
-    val ruleRadius: InputField<Int> = InputField(value = 500, label = "effecting area radius"),
-    val ruleDelay: InputField<Int> = InputField(value = 0,label = "notifier delay")
+    val ruleRadius: InputField<Double> = InputField(value = 150.0, label = "effecting area radius", enabled = false),
+    val ruleDelay: InputField<Int> = InputField(value = 5,label = "notifier delay")
 )
