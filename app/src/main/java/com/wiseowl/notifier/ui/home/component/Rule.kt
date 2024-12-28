@@ -41,14 +41,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wiseowl.notifier.domain.model.ActionType
 import com.wiseowl.notifier.domain.model.Location
-import com.wiseowl.notifier.domain.model.Place
+import com.wiseowl.notifier.domain.model.RepeatType
 import com.wiseowl.notifier.domain.model.Rule
 import com.wiseowl.notifier.ui.home.model.HomeEvent
 
 @Composable
 @Preview
 fun Rule(
-    rule: Rule = Rule(1, "Title", "description",location = Location(111.0,111.0), 12.0, true, ActionType.LEAVING, 10),
+    rule: Rule = Rule(1, "Title", "description",location = Location(111.0,111.0), 12.0, true, ActionType.LEAVING, RepeatType.REPEAT,10),
     onEvent: (HomeEvent) -> Unit = {}
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "")

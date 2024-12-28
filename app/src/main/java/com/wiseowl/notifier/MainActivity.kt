@@ -1,5 +1,6 @@
 package com.wiseowl.notifier
 
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -26,6 +27,7 @@ import com.wiseowl.notifier.ui.navigation.Login
 import com.wiseowl.notifier.ui.navigation.Root
 import com.wiseowl.notifier.ui.theme.NotifierTheme
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.unit.dp
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import com.wiseowl.notifier.data.local.datastore.NotifierDataStore
@@ -37,6 +39,8 @@ import com.wiseowl.notifier.ui.Navigate
 import com.wiseowl.notifier.ui.PopBackStack
 import com.wiseowl.notifier.ui.ProgressBar
 import com.wiseowl.notifier.ui.SnackBar
+import com.wiseowl.notifier.ui.common.component.BlurLayer
+import com.wiseowl.notifier.ui.common.component.MovingParticle
 import kotlinx.coroutines.launch
 import java.util.UUID
 import java.util.concurrent.TimeUnit
@@ -47,17 +51,32 @@ class MainActivity : ComponentActivity() {
         NotifierDataStore.initialize(this.application)
         ServiceLocator.initialize(this.application)
 
-        val requestLauncher = registerForActivityResult(contract = ActivityResultContracts.RequestMultiplePermissions()){ result ->
-            if(!result.containsValue(false)){
-                val workRequest: PeriodicWorkRequest = PeriodicWorkRequest.Builder(
-                    NotifierWorker::class.java,
-                    PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS,
-                    TimeUnit.MILLISECONDS).setId(UUID.fromString(UUID_STRING)
-                ).build()
-                WorkManager.getInstance(applicationContext).enqueue(workRequest)
-            } else WorkManager.getInstance(applicationContext).cancelWorkById(UUID.fromString("1"))
+        val requestLauncher =
+            registerForActivityResult(contract = ActivityResultContracts.RequestMultiplePermissions()) { result ->
+                if (!result.containsValue(false)) {
+                    val workRequest: PeriodicWorkRequest = PeriodicWorkRequest.Builder(
+                        NotifierWorker::class.java,
+                        PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS,
+                        TimeUnit.MILLISECONDS
+                    ).setId(
+                        UUID.fromString(UUID_STRING)
+                    ).build()
+                    WorkManager.getInstance(applicationContext).enqueue(workRequest)
+                } else WorkManager.getInstance(applicationContext)
+                    .cancelWorkById(UUID.fromString(UUID_STRING))
+            }
+        var permissionRequired = arrayOf(
+            android.Manifest.permission.ACCESS_FINE_LOCATION,
+            android.Manifest.permission.ACCESS_COARSE_LOCATION
+        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            permissionRequired = arrayOf(
+                android.Manifest.permission.ACCESS_FINE_LOCATION,
+                android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                android.Manifest.permission.POST_NOTIFICATIONS
+            )
         }
-        requestLauncher.launch(arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION,android.Manifest.permission.ACCESS_COARSE_LOCATION))
+        requestLauncher.launch(permissionRequired)
 
         enableEdgeToEdge()
         setContent {
@@ -67,9 +86,9 @@ class MainActivity : ComponentActivity() {
             var progressBarVisibility by remember { mutableStateOf(false) }
             var padding by remember { mutableStateOf(PaddingValues()) }
             val isLoggedIn = ServiceLocator.getAuthenticator().isLoggedIn()
-            val currentScreen = if(isLoggedIn) Home else Login
+            val currentScreen = if (isLoggedIn) Home else Login
             EventHandler.subscribe { event ->
-                when(event){
+                when (event) {
                     is SnackBar -> coroutineScope.launch {
                         snackBarHost.currentSnackbarData?.dismiss()
                         snackBarHost.showSnackbar(event.text)
@@ -83,16 +102,28 @@ class MainActivity : ComponentActivity() {
             NotifierTheme {
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
-                    snackbarHost = { Box(
-                        Modifier
-                            .fillMaxSize()
-                            .padding(padding), contentAlignment = Alignment.TopCenter) {
-                        SnackbarHost(hostState = snackBarHost) }
+                    snackbarHost = {
+                        Box(
+                            Modifier
+                                .fillMaxSize()
+                                .padding(padding), contentAlignment = Alignment.TopCenter
+                        ) {
+                            SnackbarHost(hostState = snackBarHost)
+                        }
                     }
                 ) { innerPadding ->
                     padding = innerPadding
-                    Root(modifier = Modifier.padding(innerPadding), navController = navController, currentScreen)
-                    if(progressBarVisibility) IndeterminateCircularIndicator()
+                    BlurLayer(Modifier.fillMaxSize().padding(padding), 119f) {
+                        repeat(4){
+                            MovingParticle(size = 330.dp)
+                        }
+                    }
+                    Root(
+                        modifier = Modifier.padding(innerPadding),
+                        navController = navController,
+                        currentScreen
+                    )
+                    if (progressBarVisibility) IndeterminateCircularIndicator()
                 }
             }
         }

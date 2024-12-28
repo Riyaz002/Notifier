@@ -31,14 +31,20 @@ class AddRuleViewModel: ViewModel() {
 
     fun onEvent(event: Event){
         when(event){
-            is AddRuleEvent.OnChangeRuleActionType -> _state.update { state -> state.copy( actionType = state.actionType.copy(event.actionType)) }
-            is AddRuleEvent.OnChangeRuleDelay -> _state.update { state -> state.copy( ruleDelay = state.ruleDelay.copy(event.delayInMinutes)) }
+            is AddRuleEvent.OnClickActionType -> _state.update { state -> state.copy(actionTypeSelectorExpandedState = true) }
+            is AddRuleEvent.OnClickRepeatType -> _state.update { state -> state.copy(repeatTypeSelectorExpandedState = true) }
+            is AddRuleEvent.OnChangeRuleActionType -> _state.update { state -> state.copy( actionType = state.actionType.copy(event.actionType), actionTypeSelectorExpandedState = false) }
+            is AddRuleEvent.OnChangeRuleRepeatType -> _state.update { state -> state.copy( repeatType = state.repeatType.copy(event.repeatType), repeatTypeSelectorExpandedState = false) }
             is AddRuleEvent.OnChangeRuleDescription -> _state.update { state -> state.copy( ruleDescription = state.ruleDescription.copy(event.description))}
             is AddRuleEvent.OnClickSelectLocationField -> _state.update { state -> state.copy(locationSelectorExpandedState = true) }
             is AddRuleEvent.CloseLocationDialog -> _state.update { state -> state.copy(locationSelectorExpandedState = false) }
             is AddRuleEvent.OnChangeRuleName -> _state.update { state -> state.copy( ruleName = state.ruleName.copy(event.name)) }
             is AddRuleEvent.OnChangeRuleLocation -> _state.update { state -> state.copy(selectedPlaceLocation = event.location) }
             is AddRuleEvent.OnPlaceSuggestionUpdated -> _state.update { state -> state.copy(suggestions = event.suggestions.orEmpty()) }
+            is AddRuleEvent.OnChangeRuleDelay -> {
+                val newDelay = event.delayInMinutes.toDoubleOrNull()?.toInt() ?: return
+                _state.update { state -> state.copy( ruleDelay = state.ruleDelay.copy(newDelay)) }
+            }
             is AddRuleEvent.OnChangeRuleRadius -> {
                 val newRadius = event.radiusInMeters.toDoubleOrNull()?.roundToInt()?.toDouble()
                 _state.update { state -> state.copy( ruleRadius = state.ruleRadius.copy(newRadius)) }
@@ -59,7 +65,7 @@ class AddRuleViewModel: ViewModel() {
             is AddRuleEvent.CreateRule -> {
                 viewModelScope.launch{
                     val value = state.value
-                    if(value.ruleName.value==null) {
+                    if(value.ruleName.value.isNullOrEmpty()) {
                         _state.update { it.copy(ruleName = it.ruleName.copy(error = "Name cannot be empty")) }
                         return@launch
                     }
@@ -82,7 +88,8 @@ class AddRuleViewModel: ViewModel() {
                         location = value.selectedPlaceLocation,
                         radiusInMeter = value.ruleRadius.value,
                         actionType = value.actionType.value,
-                        active = false,
+                        active = true,
+                        repeatType = value.repeatType.value,
                         delayInMinutes = value.ruleDelay.value
                     )
                     with(RuleValidator(rule)){

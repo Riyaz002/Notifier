@@ -13,13 +13,13 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="HomeScreen">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
       <SelectionState runConfigName="isRuleValidReturnsFalseIfDescriptionIsEmpty()">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
       <SelectionState runConfigName="RuleValidatorTest">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="MovingParticle">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

@@ -12,6 +12,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.AbsoluteCutCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -31,6 +34,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.wiseowl.notifier.data.ServiceLocator
+import com.wiseowl.notifier.domain.model.ActionType
+import com.wiseowl.notifier.domain.model.RepeatType
 import com.wiseowl.notifier.ui.addrule.component.LocationSelector
 import com.wiseowl.notifier.ui.addrule.model.AddRuleEvent
 import com.wiseowl.notifier.ui.addrule.model.AddRuleUIEvent
@@ -39,6 +44,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Preview
 @Composable
 fun AddRuleScreen(
@@ -137,7 +143,7 @@ fun AddRuleScreen(
                     placeName = state.selectedPlaceName.value,
                     selectedLocation = state.selectedPlaceLocation,
                     radius = state.ruleRadius.value,
-                    error = state.selectedPlaceName.error.toString(),
+                    error = state.selectedPlaceName.error,
                     onEvent = (viewModel)::onEvent
                 )
             }
@@ -162,12 +168,69 @@ fun AddRuleScreen(
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 label = { Text(state.ruleDelay.label) },
-                onValueChange = { viewModel.onEvent(AddRuleEvent.OnChangeRuleDelay(it.toInt())) },
+                onValueChange = { viewModel.onEvent(AddRuleEvent.OnChangeRuleDelay(it)) },
                 isError = !state.ruleDelay.error.isNullOrEmpty(),
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(top = 16.dp)
             )
+            ExposedDropdownMenuBox(
+                expanded = state.actionTypeSelectorExpandedState,
+                onExpandedChange = {}) {
+
+                OutlinedTextField(
+                    value = state.actionType.value.toString(),
+                    shape = AbsoluteCutCornerShape(0.dp),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    label = { Text(state.actionType.label) },
+                    enabled = state.actionType.enabled,
+                    onValueChange = { viewModel.onEvent(AddRuleEvent.OnChangeRuleDelay(it)) },
+                    isError = !state.actionType.error.isNullOrEmpty(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp)
+                        .menuAnchor()
+                        .clickable { viewModel.onEvent(AddRuleEvent.OnClickActionType) }
+                )
+
+                ExposedDropdownMenu(expanded = state.actionTypeSelectorExpandedState, onDismissRequest = {  }) {
+                    ActionType.entries.forEach {
+                        DropdownMenuItem(text = {
+                            Text(text = it.name)
+                        }, onClick = { viewModel.onEvent(AddRuleEvent.OnChangeRuleActionType(it)) })
+                    }
+                }
+            }
+
+            ExposedDropdownMenuBox(
+                expanded = state.repeatTypeSelectorExpandedState,
+                onExpandedChange = {}) {
+
+                OutlinedTextField(
+                    value = state.repeatType.value.toString(),
+                    shape = AbsoluteCutCornerShape(0.dp),
+                    singleLine = true,
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    label = { Text(state.repeatType.label) },
+                    enabled = state.repeatType.enabled,
+                    onValueChange = { },
+                    isError = !state.repeatType.error.isNullOrEmpty(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp)
+                        .menuAnchor()
+                        .clickable { viewModel.onEvent(AddRuleEvent.OnClickRepeatType   ) }
+                )
+
+                ExposedDropdownMenu(expanded = state.repeatTypeSelectorExpandedState, onDismissRequest = {  }) {
+                    RepeatType.entries.forEach {
+                        DropdownMenuItem(text = {
+                            Text(text = it.name)
+                        }, onClick = { viewModel.onEvent(AddRuleEvent.OnChangeRuleRepeatType(it)) })
+                    }
+                }
+            }
         }
 
         TextButton(

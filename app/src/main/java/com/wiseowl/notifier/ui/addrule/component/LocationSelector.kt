@@ -76,9 +76,7 @@ fun LocationSelector(
         ).zoom(0f)
     }
     val effectedArea by rememberUpdatedState(newValue = radius)
-    val transitionAnimationState = animateFloatAsState(
-        targetValue = effectedArea?.toFloat() ?: 0f
-    )
+    val transitionAnimationState = animateFloatAsState(targetValue = effectedArea?.toFloat() ?: 0f)
     LaunchedEffect(key1 = selectedLocation) {
         if (selectedLocation == null) {
             EventHandler.send(ProgressBar(true))
