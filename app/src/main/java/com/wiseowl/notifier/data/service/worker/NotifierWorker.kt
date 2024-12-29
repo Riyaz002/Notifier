@@ -32,7 +32,8 @@ class NotifierWorker(context: Context, parameters: WorkerParameters): CoroutineW
             val message = Message(
                 rule.id,
                 title = "This is a reminder notification".toUpperCase(Locale.current),
-                style = Style.DEFAULT
+                style = Style.DEFAULT,
+                channelID = "default"
             )
 
             if(isInRange && rule.actionType == ActionType.ENTERING){

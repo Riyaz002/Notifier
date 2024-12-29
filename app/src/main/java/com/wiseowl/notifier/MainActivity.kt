@@ -1,5 +1,6 @@
 package com.wiseowl.notifier
 
+import android.app.NotificationManager
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -31,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import com.wiseowl.notifier.data.local.datastore.NotifierDataStore
+import com.wiseowl.notifier.data.service.notification.Notification
 import com.wiseowl.notifier.data.service.worker.NotifierWorker
 import com.wiseowl.notifier.data.service.worker.NotifierWorker.Companion.UUID_STRING
 import com.wiseowl.notifier.domain.event.EventHandler
@@ -54,6 +56,9 @@ class MainActivity : ComponentActivity() {
         val requestLauncher =
             registerForActivityResult(contract = ActivityResultContracts.RequestMultiplePermissions()) { result ->
                 if (!result.containsValue(false)) {
+                    if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O) {
+                        Notification().createNotificationChannel(this.applicationContext, "default", "notifier", NotificationManager.IMPORTANCE_HIGH)
+                    }
                     val workRequest: PeriodicWorkRequest = PeriodicWorkRequest.Builder(
                         NotifierWorker::class.java,
                         PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS,

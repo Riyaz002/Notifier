@@ -152,8 +152,8 @@ fun LocationSelector(
                         onEvent(
                             AddRuleEvent.OnChangeRuleLocation(
                                 Location(
-                                    it.longitude,
-                                    it.latitude
+                                    longitude = it.longitude,
+                                    latitude = it.latitude
                                 )
                             )
                         )

@@ -43,7 +43,7 @@ class LocationService private constructor(context: Context) {
         if(result==null) return null
         val longitude = result.longitude
         val latitude = result.latitude
-        lastFetchedLocation = Location(longitude, latitude)
+        lastFetchedLocation = Location(longitude = longitude, latitude = latitude)
         return lastFetchedLocation
     }
 
