@@ -9,7 +9,7 @@ import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.graphics.graphicsLayer
 
 @Composable
-fun BlurLayer(
+fun BlurBox(
     modifier: Modifier = Modifier,
     blurRadius: Float,
     content: @Composable() (BoxScope.() -> Unit)

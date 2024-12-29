@@ -9,14 +9,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
@@ -31,28 +28,23 @@ enum class Side(val value: Int) {
     LEFT(3)
 }
 
-enum class Shapes(){
-    CIRCLE,
-    TRAPEZIUM,
-    SQUARE
-}
-
 @Composable
 fun MovingParticle(
     modifier: Modifier = Modifier,
     size: Dp,
-    color: Color? = null
+    color: Color? = null,
+    speed: Int = Random.nextInt(0, 65)
 ) {
     val screenWidth = LocalConfiguration.current.screenWidthDp
     val screenHeight = LocalConfiguration.current.screenHeightDp
 
     var startSide = Side.entries.random()
     var endSide = Side.entries.filter { it != startSide }.random()
-    val startPosition = remember { mutableStateOf(getRandoPosition(startSide, size, screenWidth, screenHeight)) }
+    val startPosition = remember { mutableStateOf(Offset(Random.nextInt(0, screenWidth).toFloat(), Random.nextInt(0, screenHeight).toFloat())) }
     val endPosition = remember { mutableStateOf(getRandoPosition(startSide, size, screenWidth, screenHeight)) }
     val animatable = remember { Animatable(startPosition.value, Offset.VectorConverter) }
     val shape = remember { mutableStateOf(Shape.entries.random()) }
-    var randomColor = remember { mutableStateOf(color ?: Color(
+    val randomColor = remember { mutableStateOf(color ?: Color(
         red = Random.nextInt(0, 255),
         green = Random.nextInt(0, 255),
         blue = Random.nextInt(0, 255),
@@ -65,7 +57,7 @@ fun MovingParticle(
             animatable.animateTo(
                 endPosition.value,
                 animationSpec = tween(
-                    durationMillis = Random.nextInt(7000, 10000),
+                    durationMillis = (1000f * (100f/speed.toFloat())).toInt(),
                     easing = LinearEasing
                 )
             )
@@ -84,8 +76,7 @@ fun MovingParticle(
             animatable.animateTo(
                 startPosition.value,
                 animationSpec = tween(
-                    durationMillis = 0,
-                    easing = LinearEasing
+                    durationMillis = 0
                 )
             )
         }

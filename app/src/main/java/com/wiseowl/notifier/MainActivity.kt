@@ -39,7 +39,7 @@ import com.wiseowl.notifier.ui.Navigate
 import com.wiseowl.notifier.ui.PopBackStack
 import com.wiseowl.notifier.ui.ProgressBar
 import com.wiseowl.notifier.ui.SnackBar
-import com.wiseowl.notifier.ui.common.component.BlurLayer
+import com.wiseowl.notifier.ui.common.component.BlurBox
 import com.wiseowl.notifier.ui.common.component.MovingParticle
 import kotlinx.coroutines.launch
 import java.util.UUID
@@ -113,10 +113,8 @@ class MainActivity : ComponentActivity() {
                     }
                 ) { innerPadding ->
                     padding = innerPadding
-                    BlurLayer(Modifier.fillMaxSize().padding(padding), 119f) {
-                        repeat(4){
-                            MovingParticle(size = 330.dp)
-                        }
+                    BlurBox(Modifier.fillMaxSize().padding(padding), 80f) {
+                        repeat(5){ MovingParticle(size = 300.dp, speed = 11) }
                     }
                     Root(
                         modifier = Modifier.padding(innerPadding),
