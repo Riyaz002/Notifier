@@ -33,7 +33,8 @@ fun MovingParticle(
     modifier: Modifier = Modifier,
     size: Dp,
     color: Color? = null,
-    speed: Int = Random.nextInt(0, 65)
+    speed: Int = Random.nextInt(0, 65),
+    shape: Shape = Shape.entries.random()
 ) {
     val screenWidth = LocalConfiguration.current.screenWidthDp
     val screenHeight = LocalConfiguration.current.screenHeightDp
@@ -43,7 +44,7 @@ fun MovingParticle(
     val startPosition = remember { mutableStateOf(Offset(Random.nextInt(0, screenWidth).toFloat(), Random.nextInt(0, screenHeight).toFloat())) }
     val endPosition = remember { mutableStateOf(getRandoPosition(startSide, size, screenWidth, screenHeight)) }
     val animatable = remember { Animatable(startPosition.value, Offset.VectorConverter) }
-    val shape = remember { mutableStateOf(Shape.entries.random()) }
+    val shape = remember { mutableStateOf(shape) }
     val randomColor = remember { mutableStateOf(color ?: Color(
         red = Random.nextInt(0, 255),
         green = Random.nextInt(0, 255),
@@ -64,7 +65,6 @@ fun MovingParticle(
             startSide = Side.entries.random()
             endSide = Side.entries.filter { it != startSide }.random()
             startPosition.value = getRandoPosition(startSide, size, screenWidth, screenHeight)
-            shape.value = Shape.entries.random()
             if(color==null){
                 randomColor.value = Color(
                     red = Random.nextInt(0, 255),
