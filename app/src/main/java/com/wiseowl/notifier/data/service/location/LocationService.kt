@@ -20,6 +20,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlin.math.atan2
+import kotlin.math.cos
+import kotlin.math.sin
+import kotlin.math.sqrt
 
 const val LOCATION_FETCH_BACKOFF_TIME_MILLS = 1*60*1000
 
@@ -65,6 +69,24 @@ class LocationService private constructor(context: Context) {
                 null)
             awaitClose()
         }
+    }
+
+    /**
+     * Calculate distance between 2 location coordinates
+     */
+    fun getDistanceFromLatLonInMeters(location1: Location, location2: Location): Double {
+        val R = 6371 // Radius of the earth in km
+        val dLat = deg2rad(location2.latitude - location1.latitude)
+        val dLon = deg2rad(location2.longitude - location1.longitude)
+        val a = sin(dLat / 2) * sin(dLat / 2) +
+                cos(deg2rad(location1.latitude)) * cos(deg2rad(location2.latitude)) *
+                sin(dLon / 2) * sin(dLon / 2)
+        val c = 2 * atan2(sqrt(a), sqrt(1 - a))
+        return R * c * 1000 // Distance in km
+    }
+
+    private fun deg2rad(deg: Double): Double {
+        return deg * (Math.PI / 180)
     }
 
     companion object{

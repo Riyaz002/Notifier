@@ -5,13 +5,11 @@ import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.toUpperCase
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.riyaz.dakiya.Dakiya
-import com.riyaz.dakiya.core.model.Message
-import com.riyaz.dakiya.core.notification.Style
 import com.wiseowl.notifier.data.local.database.NotifierDatabase
 import com.wiseowl.notifier.data.service.location.LocationService
-import com.wiseowl.notifier.data.util.LocationDistanceCalculator
+import com.wiseowl.notifier.data.service.notification.Notification
 import com.wiseowl.notifier.domain.model.ActionType
+import com.wiseowl.notifier.domain.model.Location
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
 
@@ -27,19 +25,14 @@ class NotifierWorker(context: Context, parameters: WorkerParameters): CoroutineW
         rules.forEach { rule ->
             val ruleLongitude = rule.location.longitude
             val ruleLatitude = rule.location.latitude
-            val distanceInMeters = LocationDistanceCalculator(longitude, latitude, ruleLongitude, ruleLatitude).getDistanceFromLatLonInMeters()
+            val distanceInMeters = locationService.getDistanceFromLatLonInMeters(Location(longitude = longitude, latitude = latitude), Location(longitude = ruleLongitude, latitude = ruleLatitude))
+
             val isInRange = (distanceInMeters - rule.radiusInMeter) < 0
-            val message = Message(
-                rule.id,
-                title = "This is a reminder notification".toUpperCase(Locale.current),
-                style = Style.DEFAULT,
-                channelID = "default"
-            )
 
             if(isInRange && rule.actionType == ActionType.ENTERING){
-                Dakiya.showNotification(message.copy(subtitle = "This is the reminder for ${rule.title} since your have entered the location"))
+                Notification().notify(rule.id, title = "This is a reminder notification".toUpperCase(Locale.current), subtitle = "This is the reminder for ${rule.title} since your have entered the location")
             } else if(!isInRange && rule.actionType == ActionType.LEAVING){
-                Dakiya.showNotification(message.copy(subtitle = "This is the reminder for ${rule.title} since your have left the location"))
+                Notification().notify(rule.id, title = "This is a reminder notification".toUpperCase(Locale.current), subtitle = "This is the reminder for ${rule.title} since your have left the location")
             }
         }
         return Result.success()
