@@ -44,6 +44,7 @@ import com.wiseowl.notifier.ui.ProgressBar
 import com.wiseowl.notifier.ui.SnackBar
 import com.wiseowl.notifier.ui.common.component.BlurBox
 import com.wiseowl.notifier.ui.common.component.MovingParticle
+import com.wiseowl.notifier.ui.common.component.Shape
 import kotlinx.coroutines.launch
 import java.util.concurrent.TimeUnit
 
@@ -120,7 +121,11 @@ class MainActivity : ComponentActivity() {
                 ) { innerPadding ->
                     padding = innerPadding
                     BlurBox(Modifier.fillMaxSize().padding(padding), 80f) {
-                        repeat(5){ MovingParticle(size = 300.dp, speed = 11) }
+                        repeat(5){ MovingParticle(
+                            size = 300.dp,
+                            speed = 11,
+                            shape = Shape.CIRCLE
+                        ) }
                     }
                     Root(
                         modifier = Modifier.padding(innerPadding),
