@@ -39,7 +39,6 @@ class NotifierWorker(context: Context, parameters: WorkerParameters): CoroutineW
     }
 
     companion object{
-        //don't change UUID_STRING, Changing this will result in creation of new worker without cancelling the old one.
-        const val UUID_STRING = "0f14d0ab-9605-4a62-a9e4-5ed26688389b"
+        const val NAME = "NotifierWorker"
     }
 }

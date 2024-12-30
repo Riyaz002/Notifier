@@ -77,7 +77,7 @@ android {
 }
 
 room {
-    schemaDirectory("./schema")
+    schemaDirectory("$projectDir/schema")
 }
 
 protobuf {

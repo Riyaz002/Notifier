@@ -29,12 +29,13 @@ import com.wiseowl.notifier.ui.navigation.Root
 import com.wiseowl.notifier.ui.theme.NotifierTheme
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
+import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import com.wiseowl.notifier.data.local.datastore.NotifierDataStore
 import com.wiseowl.notifier.data.service.notification.Notification
 import com.wiseowl.notifier.data.service.worker.NotifierWorker
-import com.wiseowl.notifier.data.service.worker.NotifierWorker.Companion.UUID_STRING
+import com.wiseowl.notifier.data.service.worker.NotifierWorker.Companion.NAME
 import com.wiseowl.notifier.domain.event.EventHandler
 import com.wiseowl.notifier.domain.exception.UnhandledEventException
 import com.wiseowl.notifier.ui.Navigate
@@ -44,7 +45,6 @@ import com.wiseowl.notifier.ui.SnackBar
 import com.wiseowl.notifier.ui.common.component.BlurBox
 import com.wiseowl.notifier.ui.common.component.MovingParticle
 import kotlinx.coroutines.launch
-import java.util.UUID
 import java.util.concurrent.TimeUnit
 
 class MainActivity : ComponentActivity() {
@@ -63,12 +63,13 @@ class MainActivity : ComponentActivity() {
                         NotifierWorker::class.java,
                         PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS,
                         TimeUnit.MILLISECONDS
-                    ).setId(
-                        UUID.fromString(UUID_STRING)
-                    ).build()
-                    WorkManager.getInstance(applicationContext).enqueue(workRequest)
-                } else WorkManager.getInstance(applicationContext)
-                    .cancelWorkById(UUID.fromString(UUID_STRING))
+                    ).addTag(NAME).build()
+                    WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
+                        NAME,
+                        ExistingPeriodicWorkPolicy.UPDATE,
+                        workRequest,
+                    )
+                }
             }
         var permissionRequired = arrayOf(
             android.Manifest.permission.ACCESS_FINE_LOCATION,
