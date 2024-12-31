@@ -21,6 +21,7 @@ data class RuleEntity(
 ){
     companion object{
         fun Rule.toRuleEntity() = RuleEntity(
+            id = id,
             title = name,
             description = description,
             location = location,
