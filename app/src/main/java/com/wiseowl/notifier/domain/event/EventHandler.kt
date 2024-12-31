@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 
 
 /**
- * PubSub model to act on global events
+ * PubSub model to act on global events.
  * Subscribe it from a higher level like [MainActivity] to listen to events.
  *
  * One can send [Event] from any part of the app using [EventHandler.send].
