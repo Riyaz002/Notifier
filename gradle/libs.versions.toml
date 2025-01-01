@@ -28,6 +28,7 @@ google-service = "4.4.2"
 datastore = "1.1.1"
 secretsGradlePluginVersion = "2.0.1"
 work = "2.9.1"
+rules = "1.6.1"
 
 [libraries]
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
@@ -68,6 +69,7 @@ androidx-datastore = { group = "androidx.datastore", name = "datastore-preferenc
 androidx-datastore-preference = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
 androidx-workmanager = { group = "androidx.work", name = "work-runtime-ktx", version.ref = "work" }
 secrets-gradle-plugin = { module = "com.google.android.libraries.mapsplatform.secrets-gradle-plugin:secrets-gradle-plugin", version.ref = "secretsGradlePluginVersion" }
+androidx-rules = { group = "androidx.test", name = "rules", version.ref = "rules" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
