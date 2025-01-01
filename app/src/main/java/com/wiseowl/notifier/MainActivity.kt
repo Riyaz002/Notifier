@@ -103,7 +103,7 @@ class MainActivity : ComponentActivity() {
                     is Navigate -> navController.navigate(event.screen)
                     is PopBackStack -> navController.popBackStack()
                     is ProgressBar -> progressBarVisibility = event.show
-                    else -> throw UnhandledEventException(event::class.simpleName.toString())
+                    else -> throw UnhandledEventException(event)
                 }
             }
             NotifierTheme {
