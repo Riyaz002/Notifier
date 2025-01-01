@@ -1,4 +1,4 @@
-package com.wiseowl.notifier.data
+package com.wiseowl.notifier.data.di
 
 import android.content.Context
 import com.wiseowl.notifier.data.local.database.NotifierDatabase

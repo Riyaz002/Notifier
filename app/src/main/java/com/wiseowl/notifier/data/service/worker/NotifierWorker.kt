@@ -5,7 +5,7 @@ import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.toUpperCase
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.wiseowl.notifier.data.ServiceLocator
+import com.wiseowl.notifier.data.di.ServiceLocator
 import com.wiseowl.notifier.data.service.notification.Notification
 import com.wiseowl.notifier.domain.model.ActionType
 import com.wiseowl.notifier.domain.model.Location
