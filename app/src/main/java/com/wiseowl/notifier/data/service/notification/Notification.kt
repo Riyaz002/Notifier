@@ -11,11 +11,11 @@ import com.riyaz.dakiya.core.notification.Style
 
 class Notification {
     @RequiresApi(Build.VERSION_CODES.O)
-    fun createNotificationChannel(context: Context, id: String, name: String, importance: Int) {
+    fun createNotificationChannel(context: Context) {
         val notificationManager = context.getSystemService(NotificationManager::class.java)
         notificationManager.createNotificationChannel(
             NotificationChannel(
-                id, name, importance
+                "default", "notifier", NotificationManager.IMPORTANCE_HIGH
             )
         )
     }

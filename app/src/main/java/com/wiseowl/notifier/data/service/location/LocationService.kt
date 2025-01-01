@@ -20,6 +20,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlin.jvm.Throws
 import kotlin.math.atan2
 import kotlin.math.cos
 import kotlin.math.sin
@@ -35,9 +36,13 @@ class LocationService private constructor(context: Context) {
     private var lastFetchedLocation: Location? = null
     private var lastFetchedTime: Long = 0
 
+    /**
+     * get current location with a back of time of [LOCATION_FETCH_BACKOFF_TIME_MILLS].
+     */
+    @Throws(SecurityException::class)
     suspend fun getCurrentLocation(context: Context, dispatcher: CoroutineDispatcher): Location? {
         if(ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED || ActivityCompat.checkSelfPermission(context, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) throw SecurityException("Location permission not granted")
-        if(lastFetchedLocation!=null && (System.currentTimeMillis()-lastFetchedTime)<LOCATION_FETCH_BACKOFF_TIME_MILLS){
+        if(lastFetchedLocation!=null && (System.currentTimeMillis()-lastFetchedTime) < LOCATION_FETCH_BACKOFF_TIME_MILLS){
             return lastFetchedLocation
         }
         val result = fusedLocationProviderClient.getCurrentLocation(

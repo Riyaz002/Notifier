@@ -135,8 +135,11 @@ dependencies {
 
     implementation(libs.androidx.datastore)
     implementation(libs.androidx.datastore.preference)
-    implementation(libs.androidx.workmanager)
     implementation(libs.dakiya)
+
+    //WorkManager
+    implementation(libs.androidx.workmanager)
+    androidTestImplementation("androidx.work:work-testing:2.3.4")
 
     implementation(libs.accompanist.systemuicontroller)
     // Starting from Protobuf 3.8.0, use the lite runtime library
@@ -165,5 +168,5 @@ dependencies {
 
     //places
 //  implementation(platform("org.jetbrains.kotlin:kotlin-bom:$kotlin_version"))
-    implementation(libs.places)    
+    implementation(libs.places)
 }

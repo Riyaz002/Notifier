@@ -58,7 +58,7 @@ class MainActivity : ComponentActivity() {
             registerForActivityResult(contract = ActivityResultContracts.RequestMultiplePermissions()) { result ->
                 if (!result.containsValue(false)) {
                     if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O) {
-                        Notification().createNotificationChannel(this.applicationContext, "default", "notifier", NotificationManager.IMPORTANCE_HIGH)
+                        Notification().createNotificationChannel(this.applicationContext)
                     }
                     val workRequest: PeriodicWorkRequest = PeriodicWorkRequest.Builder(
                         NotifierWorker::class.java,
@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity() {
                     WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
                         NAME,
                         ExistingPeriodicWorkPolicy.UPDATE,
-                        workRequest,
+                        workRequest
                     )
                 }
             }
