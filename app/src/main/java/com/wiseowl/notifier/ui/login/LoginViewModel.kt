@@ -59,8 +59,8 @@ class LoginViewModel: ViewModel() {
 
     private fun saveUserInfo(authResult: AuthResult) {
         viewModelScope.launch(Dispatchers.IO) {
-            val user = UserRepositoryImpl.getInstance().getUserById(authResult.user?.uid.toString())
-            UserRepositoryImpl.getInstance().saveUser(user)
+            val user = ServiceLocator.getUserRepository().getUserById(authResult.user?.uid.toString())
+            ServiceLocator.getUserRepository().saveUser(user)
         }
     }
 

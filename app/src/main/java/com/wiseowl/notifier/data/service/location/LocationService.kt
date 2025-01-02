@@ -27,7 +27,7 @@ import kotlin.math.sqrt
 
 const val LOCATION_FETCH_BACKOFF_TIME_MILLS = 1*60*1000
 
-class LocationService private constructor(context: Context) {
+class LocationService(context: Context) {
     val coroutineScope = CoroutineScope(SupervisorJob())
     private val fusedLocationProviderClient: FusedLocationProviderClient by lazy {
         LocationServices.getFusedLocationProviderClient(context)
@@ -87,16 +87,5 @@ class LocationService private constructor(context: Context) {
 
     private fun deg2rad(deg: Double): Double {
         return deg * (Math.PI / 180)
-    }
-
-    companion object{
-        @Volatile private var INSTANCE: LocationService? = null
-
-        fun getInstance(context: Context): LocationService{
-            return INSTANCE ?: synchronized(this){
-                INSTANCE = LocationService(context)
-                INSTANCE!!
-            }
-        }
     }
 }

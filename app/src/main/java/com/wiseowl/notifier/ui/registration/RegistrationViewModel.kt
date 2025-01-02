@@ -60,7 +60,7 @@ class RegistrationViewModel: ViewModel() {
                             viewModelScope.launch(Dispatchers.IO) {
                                 EventHandler.send(ProgressBar(true))
                                 val authResult = result.data as AuthResult
-                                UserRepositoryImpl.getInstance().saveUser(
+                                ServiceLocator.getUserRepository().saveUser(
                                     User(
                                         userId = authResult.user?.uid.toString(),
                                         email = authResult.user?.email.toString(),

@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-class UserRepositoryImpl private constructor(): UserRepository {
+class UserRepositoryImpl(): UserRepository {
     private val local = NotifierDataStore
     private val remote = FirebaseFireStore
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
@@ -49,16 +49,5 @@ class UserRepositoryImpl private constructor(): UserRepository {
             local.saveUser(user)
             user
         }.await()
-    }
-
-    companion object{
-        private var INSTANCE: UserRepository? = null
-
-        fun getInstance(): UserRepository {
-            return INSTANCE ?: synchronized(this){
-                INSTANCE = UserRepositoryImpl()
-                return INSTANCE!!
-            }
-        }
     }
 }
