@@ -10,6 +10,7 @@ import com.wiseowl.notifier.data.service.notification.Notification
 import com.wiseowl.notifier.domain.model.ActionType
 import com.wiseowl.notifier.domain.model.Location
 import com.wiseowl.notifier.domain.model.RepeatType
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
 
 class NotifierWorker(context: Context, parameters: WorkerParameters) : CoroutineWorker(context, parameters) {
@@ -40,7 +41,7 @@ class NotifierWorker(context: Context, parameters: WorkerParameters) : Coroutine
 
             when(rule.actionType){
                 ActionType.ENTERING -> {
-                    if (isInRange && rulze.active) {
+                    if (isInRange && rule.active) {
                         Notification().notify(
                             rule.id,
                             title = "This is a reminder notification".toUpperCase(Locale.current),
