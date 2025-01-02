@@ -87,7 +87,7 @@ class AddRuleViewModel: ViewModel() {
                         description = value.ruleDescription.value,
                         location = value.selectedPlaceLocation,
                         radiusInMeter = value.ruleRadius.value,
-                        actionType = value.actionType.value,
+                        actionType = value.actionType.value!!,
                         active = true,
                         repeatType = value.repeatType.value,
                         delayInMinutes = value.ruleDelay.value
