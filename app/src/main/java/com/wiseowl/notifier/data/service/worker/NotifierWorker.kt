@@ -38,34 +38,35 @@ class NotifierWorker(context: Context, parameters: WorkerParameters) : Coroutine
 
             val isInRange = (distanceInMeters - rule.radiusInMeter) < 0
 
-            if (rule.actionType == ActionType.ENTERING) {
-                if (isInRange && rule.active==true) {
-                    Notification().notify(
-                        rule.id,
-                        title = "This is a reminder notification".toUpperCase(Locale.current),
-                        subtitle = "This is the reminder for ${rule.name} since your have entered the location"
-                    )
-                    val updatedRule = rule.copy(active = false)
-                    ServiceLocator.getRulesRepository().updateRule(updatedRule)
+            when(rule.actionType){
+                ActionType.ENTERING -> {
+                    if (isInRange && rulze.active) {
+                        Notification().notify(
+                            rule.id,
+                            title = "This is a reminder notification".toUpperCase(Locale.current),
+                            subtitle = "This is the reminder for ${rule.name} since your have entered the location"
+                        )
+                        val updatedRule = rule.copy(active = false)
+                        ServiceLocator.getRulesRepository().updateRule(updatedRule)
 
-                } else if (!isInRange && rule.repeatType == RepeatType.REPEAT) {
-                    val updatedRule = rule.copy(active = true)
-                    ServiceLocator.getRulesRepository().updateRule(updatedRule)
+                    } else if (!isInRange && rule.repeatType == RepeatType.REPEAT && rule.active) {
+                        val updatedRule = rule.copy(active = true)
+                        ServiceLocator.getRulesRepository().updateRule(updatedRule)
+                    }
                 }
-            }
-
-            if (rule.actionType == ActionType.ENTERING) {
-                if (!isInRange && rule.active == true) {
-                    Notification().notify(
-                        rule.id,
-                        title = "This is a reminder notification".toUpperCase(Locale.current),
-                        subtitle = "This is the reminder for ${rule.name} since your have entered the location"
-                    )
-                    val updatedRule = rule.copy(active = false)
-                    ServiceLocator.getRulesRepository().updateRule(updatedRule)
-                } else if (isInRange && rule.repeatType == RepeatType.REPEAT) {
-                    val updatedRule = rule.copy(active = true)
-                    ServiceLocator.getRulesRepository().updateRule(updatedRule)
+                ActionType.LEAVING -> {
+                    if (!isInRange && rule.active) {
+                        Notification().notify(
+                            rule.id,
+                            title = "This is a reminder notification".toUpperCase(Locale.current),
+                            subtitle = "This is the reminder for ${rule.name} since your have entered the location"
+                        )
+                        val updatedRule = rule.copy(active = false)
+                        ServiceLocator.getRulesRepository().updateRule(updatedRule)
+                    } else if (isInRange && rule.repeatType == RepeatType.REPEAT && !rule.active) {
+                        val updatedRule = rule.copy(active = true)
+                        ServiceLocator.getRulesRepository().updateRule(updatedRule)
+                    }
                 }
             }
         }

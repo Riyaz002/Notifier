@@ -32,25 +32,6 @@ class RuleValidatorTest{
     }
 
     @Test
-    fun isRuleValidReturnsFalseIfPlaceIsNull(){
-        val rule = Rule(
-            id = 0,
-            name = "name",
-            description = "description",
-            location = Location(0.0,0.0),
-            radiusInMeter = 11.0,
-            active = true,
-            actionType = ActionType.ENTERING,
-            repeatType = RepeatType.ONCE,
-            delayInMinutes = 1
-        )
-
-        val result = RuleValidator(rule).isRuleValid()
-
-        Assert.assertFalse(result)
-    }
-
-    @Test
     fun isRuleValidReturnsFalseIfRadiusIsInvalid(){
         val rule = Rule(
             id = 0,

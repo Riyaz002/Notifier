@@ -7,7 +7,7 @@ data class Rule(
     val location: Location,
     val radiusInMeter: Double = 10.0,
     val active: Boolean,
-    val actionType: ActionType?,
+    val actionType: ActionType,
     val repeatType: RepeatType?,
     val delayInMinutes: Int = 0
 )
