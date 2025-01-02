@@ -21,7 +21,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
-import com.wiseowl.notifier.data.ServiceLocator
+import com.wiseowl.notifier.data.di.ServiceLocator
 import com.wiseowl.notifier.ui.common.component.IndeterminateCircularIndicator
 import com.wiseowl.notifier.ui.navigation.Home
 import com.wiseowl.notifier.ui.navigation.Login
@@ -103,7 +103,7 @@ class MainActivity : ComponentActivity() {
                     is Navigate -> navController.navigate(event.screen)
                     is PopBackStack -> navController.popBackStack()
                     is ProgressBar -> progressBarVisibility = event.show
-                    else -> throw UnhandledEventException(event::class.simpleName.toString())
+                    else -> throw UnhandledEventException(event)
                 }
             }
             NotifierTheme {

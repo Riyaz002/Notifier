@@ -5,26 +5,25 @@ import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.toUpperCase
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
-import com.wiseowl.notifier.data.ServiceLocator
-import com.wiseowl.notifier.data.local.database.NotifierDatabase
-import com.wiseowl.notifier.data.local.database.entity.RuleEntity.Companion.toRule
-import com.wiseowl.notifier.data.service.location.LocationService
+import com.wiseowl.notifier.data.di.ServiceLocator
 import com.wiseowl.notifier.data.service.notification.Notification
 import com.wiseowl.notifier.domain.model.ActionType
 import com.wiseowl.notifier.domain.model.Location
 import com.wiseowl.notifier.domain.model.RepeatType
 import kotlinx.coroutines.flow.firstOrNull
 
-class NotifierWorker(context: Context, parameters: WorkerParameters) :
-    CoroutineWorker(context, parameters) {
-    private val locationService = LocationService.getInstance(context)
+class NotifierWorker(context: Context, parameters: WorkerParameters) : CoroutineWorker(context, parameters) {
+    init {
+        ServiceLocator.initialize(applicationContext)
+    }
+    private val locationService = ServiceLocator.getLocationService()
     override suspend fun doWork(): Result {
         val location = locationService.getCurrentLocation(applicationContext, Dispatchers.IO)
             ?: return Result.failure()
         val longitude = location.longitude
         val latitude = location.latitude
 
-        val rules = NotifierDatabase.getInstance(applicationContext).dao.getRules().firstOrNull()
+        val rules = ServiceLocator.getRulesRepository().getRules().firstOrNull()
             ?: return Result.failure()
 
         rules.forEach { rule ->
@@ -40,32 +39,33 @@ class NotifierWorker(context: Context, parameters: WorkerParameters) :
             val isInRange = (distanceInMeters - rule.radiusInMeter) < 0
 
             if (rule.actionType == ActionType.ENTERING) {
-                if (isInRange && rule.active) {
+                if (isInRange && rule.active==true) {
                     Notification().notify(
                         rule.id,
                         title = "This is a reminder notification".toUpperCase(Locale.current),
-                        subtitle = "This is the reminder for ${rule.title} since your have entered the location"
+                        subtitle = "This is the reminder for ${rule.name} since your have entered the location"
                     )
                     val updatedRule = rule.copy(active = false)
-                    ServiceLocator.getRulesRepository().updateRule(updatedRule.toRule())
+                    ServiceLocator.getRulesRepository().updateRule(updatedRule)
+
                 } else if (!isInRange && rule.repeatType == RepeatType.REPEAT) {
                     val updatedRule = rule.copy(active = true)
-                    ServiceLocator.getRulesRepository().updateRule(updatedRule.toRule())
+                    ServiceLocator.getRulesRepository().updateRule(updatedRule)
                 }
             }
 
             if (rule.actionType == ActionType.ENTERING) {
-                if (!isInRange && rule.active) {
+                if (!isInRange && rule.active == true) {
                     Notification().notify(
                         rule.id,
                         title = "This is a reminder notification".toUpperCase(Locale.current),
-                        subtitle = "This is the reminder for ${rule.title} since your have entered the location"
+                        subtitle = "This is the reminder for ${rule.name} since your have entered the location"
                     )
                     val updatedRule = rule.copy(active = false)
-                    ServiceLocator.getRulesRepository().updateRule(updatedRule.toRule())
+                    ServiceLocator.getRulesRepository().updateRule(updatedRule)
                 } else if (isInRange && rule.repeatType == RepeatType.REPEAT) {
                     val updatedRule = rule.copy(active = true)
-                    ServiceLocator.getRulesRepository().updateRule(updatedRule.toRule())
+                    ServiceLocator.getRulesRepository().updateRule(updatedRule)
                 }
             }
         }

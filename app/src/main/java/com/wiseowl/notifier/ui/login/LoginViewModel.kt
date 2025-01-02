@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.AuthResult
 import com.wiseowl.notifier.data.repository.UserRepositoryImpl
-import com.wiseowl.notifier.data.ServiceLocator
+import com.wiseowl.notifier.data.di.ServiceLocator
 import com.wiseowl.notifier.domain.event.EventHandler
 import com.wiseowl.notifier.domain.util.Result
 import com.wiseowl.notifier.ui.Event
@@ -59,8 +59,8 @@ class LoginViewModel: ViewModel() {
 
     private fun saveUserInfo(authResult: AuthResult) {
         viewModelScope.launch(Dispatchers.IO) {
-            val user = UserRepositoryImpl.getInstance().getUserById(authResult.user?.uid.toString())
-            UserRepositoryImpl.getInstance().saveUser(user)
+            val user = ServiceLocator.getUserRepository().getUserById(authResult.user?.uid.toString())
+            ServiceLocator.getUserRepository().saveUser(user)
         }
     }
 

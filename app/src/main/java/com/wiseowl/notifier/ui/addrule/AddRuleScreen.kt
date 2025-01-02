@@ -33,7 +33,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.wiseowl.notifier.data.ServiceLocator
+import com.wiseowl.notifier.data.di.ServiceLocator
 import com.wiseowl.notifier.domain.model.ActionType
 import com.wiseowl.notifier.domain.model.RepeatType
 import com.wiseowl.notifier.ui.addrule.component.LocationSelector

@@ -4,7 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.AuthResult
 import com.wiseowl.notifier.data.repository.UserRepositoryImpl
-import com.wiseowl.notifier.data.ServiceLocator
+import com.wiseowl.notifier.data.di.ServiceLocator
 import com.wiseowl.notifier.domain.event.EventHandler
 import com.wiseowl.notifier.domain.util.Result
 import com.wiseowl.notifier.domain.model.User
@@ -60,7 +60,7 @@ class RegistrationViewModel: ViewModel() {
                             viewModelScope.launch(Dispatchers.IO) {
                                 EventHandler.send(ProgressBar(true))
                                 val authResult = result.data as AuthResult
-                                UserRepositoryImpl.getInstance().saveUser(
+                                ServiceLocator.getUserRepository().saveUser(
                                     User(
                                         userId = authResult.user?.uid.toString(),
                                         email = authResult.user?.email.toString(),

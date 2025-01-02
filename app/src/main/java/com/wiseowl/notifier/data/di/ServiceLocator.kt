@@ -1,4 +1,4 @@
-package com.wiseowl.notifier.data
+package com.wiseowl.notifier.data.di
 
 import android.content.Context
 import com.wiseowl.notifier.data.local.database.NotifierDatabase
@@ -11,15 +11,17 @@ import com.wiseowl.notifier.data.service.location.PlacesService
 
 object ServiceLocator {
     private val authenticator = FirebaseAuthenticator()
-    private val userRepository = UserRepositoryImpl.getInstance()
+    private val userRepository = UserRepositoryImpl()
     private lateinit var rulesRepository: RulesRepositoryImpl
     private lateinit var locationService: LocationService
     private lateinit var placesService: PlacesService
+    private lateinit var database: NotifierDatabase
 
     fun initialize(context: Context) {
-        rulesRepository = RulesRepositoryImpl(NotifierDatabase.getInstance(context).dao)
-        locationService = LocationService.getInstance(context)
-        placesService = PlacesService.getInstance(context)
+        database = NotifierDatabase.getInstance(context)
+        rulesRepository = RulesRepositoryImpl(database.dao)
+        locationService = LocationService(context)
+        placesService = PlacesService(context)
     }
 
     fun getAuthenticator(): Authenticator = authenticator
@@ -27,4 +29,5 @@ object ServiceLocator {
     fun getRulesRepository() = rulesRepository
     fun getPlacesService() = placesService
     fun getLocationService() = locationService
+    fun getDataAccessObject() = database.dao
 }

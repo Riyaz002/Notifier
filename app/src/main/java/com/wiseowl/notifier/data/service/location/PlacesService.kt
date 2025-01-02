@@ -13,7 +13,7 @@ import com.wiseowl.notifier.ui.addrule.model.Suggestion
 import kotlinx.coroutines.tasks.await
 
 
-class PlacesService private constructor(context: Context) {
+class PlacesService(context: Context) {
     init {
         Places.initializeWithNewPlacesApiEnabled(context, MAPS_API_KEY)
     }
@@ -48,17 +48,5 @@ class PlacesService private constructor(context: Context) {
         return if(location != null) {
             Location(location.longitude, location.latitude)
         } else null
-    }
-
-    companion object{
-        @Volatile private var INSTANCE: PlacesService? = null
-
-        internal fun getInstance(context: Context): PlacesService{
-
-            return INSTANCE ?: synchronized(this){
-                INSTANCE = PlacesService(context)
-                INSTANCE!!
-            }
-        }
     }
 }

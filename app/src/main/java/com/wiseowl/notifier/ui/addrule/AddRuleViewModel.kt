@@ -2,7 +2,7 @@ package com.wiseowl.notifier.ui.addrule
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.wiseowl.notifier.data.ServiceLocator
+import com.wiseowl.notifier.data.di.ServiceLocator
 import com.wiseowl.notifier.domain.event.EventHandler
 import com.wiseowl.notifier.domain.model.Rule
 import com.wiseowl.notifier.domain.util.RuleValidator
