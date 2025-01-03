@@ -1,6 +1,7 @@
 package com.wiseowl.notifier.data.service.worker
 
 import android.Manifest
+import android.os.Build
 import android.util.Log
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -12,7 +13,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.testing.SynchronousExecutor
 import androidx.work.testing.WorkManagerTestInitHelper
-import com.wiseowl.notifier.data.ServiceLocator
+import com.wiseowl.notifier.data.di.ServiceLocator
 import com.wiseowl.notifier.data.local.database.NotifierDatabase
 import com.wiseowl.notifier.data.local.database.entity.RuleEntity.Companion.toRuleEntity
 import com.wiseowl.notifier.domain.model.ActionType
@@ -29,12 +30,15 @@ import java.util.concurrent.TimeUnit
 @RunWith(AndroidJUnit4::class)
 class NotifierWorkerTest {
 
-    @get:Rule
-    val permissionRule = GrantPermissionRule.grant(
+    private val requiredRules = arrayListOf(
         Manifest.permission.ACCESS_FINE_LOCATION,
-        Manifest.permission.ACCESS_COARSE_LOCATION,
-        Manifest.permission.POST_NOTIFICATIONS
-    )
+        Manifest.permission.ACCESS_COARSE_LOCATION
+    ).also {
+        if(Build.VERSION_CODES.S<=Build.VERSION.SDK_INT) it.add(Manifest.permission.POST_NOTIFICATIONS)
+    }.toTypedArray()
+
+    @get:Rule
+    val permissionRule: GrantPermissionRule = GrantPermissionRule.grant(*requiredRules)
 
     private val database = NotifierDatabase.getInstance(getApplicationContext())
 
@@ -49,7 +53,7 @@ class NotifierWorkerTest {
                     location = Location(1.0, 1.0),
                     actionType = ActionType.ENTERING,
                     repeatType = RepeatType.REPEAT,
-                    radiusInMeter = 111111.0,
+                    radiusInMeter = 11.0,
                     delayInMinutes = 1,
                     active = true
                 ).toRuleEntity()

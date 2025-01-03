@@ -16,9 +16,6 @@
       <SelectionState runConfigName="NotifierWorkerTest">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
-      <SelectionState runConfigName="notifierWorkerFiringNotification()">
-        <option name="selectionMode" value="DROPDOWN" />
-      </SelectionState>
     </selectionStates>
   </component>
 </project>
