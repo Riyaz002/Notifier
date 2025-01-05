@@ -29,5 +29,4 @@ object ServiceLocator {
     fun getRulesRepository() = rulesRepository
     fun getPlacesService() = placesService
     fun getLocationService() = locationService
-    fun getDataAccessObject() = database.dao
 }
