@@ -26,8 +26,8 @@ data class RuleEntity(
             location = location,
             radiusInMeter = radiusInMeter,
             active = active,
-            actionType = actionType!!,
-            repeatType = repeatType!!,
+            actionType = actionType,
+            repeatType = repeatType,
             delayInMinutes = delayInMinutes
         )
 
