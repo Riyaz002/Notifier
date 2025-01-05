@@ -89,7 +89,7 @@ class AddRuleViewModel: ViewModel() {
                         radiusInMeter = value.ruleRadius.value,
                         actionType = value.actionType.value!!,
                         active = true,
-                        repeatType = value.repeatType.value,
+                        repeatType = value.repeatType.value!!,
                         delayInMinutes = value.ruleDelay.value
                     )
                     with(RuleValidator(rule)){
