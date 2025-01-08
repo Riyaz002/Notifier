@@ -9,7 +9,7 @@ import com.wiseowl.notifier.domain.model.Rule
 
 @Entity(tableName = "rules_table")
 data class RuleEntity(
-    @PrimaryKey(autoGenerate = true) val id: Int = 0,
+    @PrimaryKey val id: Int = 0,
     val title: String,
     val description: String?,
     val location: Location,
@@ -21,6 +21,7 @@ data class RuleEntity(
 ){
     companion object{
         fun Rule.toRuleEntity() = RuleEntity(
+            id = id,
             title = name,
             description = description,
             location = location,

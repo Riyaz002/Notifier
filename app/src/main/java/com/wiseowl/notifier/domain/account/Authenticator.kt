@@ -7,7 +7,7 @@ import kotlin.jvm.Throws
 
 interface Authenticator {
 
-    fun getCurrentUserId(): String
+    fun getCurrentUserId(): String?
 
     fun isLoggedIn(): Boolean
 

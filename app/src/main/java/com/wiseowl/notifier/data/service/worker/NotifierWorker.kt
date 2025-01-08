@@ -4,6 +4,9 @@ import android.content.Context
 import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.text.toUpperCase
 import androidx.work.CoroutineWorker
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequest
+import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import com.wiseowl.notifier.data.di.ServiceLocator
 import com.wiseowl.notifier.data.service.notification.Notification
@@ -12,6 +15,7 @@ import com.wiseowl.notifier.domain.model.Location
 import com.wiseowl.notifier.domain.model.RepeatType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
+import java.util.concurrent.TimeUnit
 
 class NotifierWorker(context: Context, parameters: WorkerParameters) : CoroutineWorker(context, parameters) {
     init {
@@ -19,6 +23,8 @@ class NotifierWorker(context: Context, parameters: WorkerParameters) : Coroutine
     }
     private val locationService = ServiceLocator.getLocationService()
     override suspend fun doWork(): Result {
+        if(!ServiceLocator.getAuthenticator().isLoggedIn()) return Result.failure()
+
         val location = locationService.getCurrentLocation(applicationContext, Dispatchers.IO)
             ?: return Result.failure()
         val longitude = location.longitude
@@ -76,5 +82,18 @@ class NotifierWorker(context: Context, parameters: WorkerParameters) : Coroutine
 
     companion object {
         const val NAME = "NotifierWorker"
+
+        fun schedule(applicationContext: Context){
+            val workRequest: PeriodicWorkRequest = PeriodicWorkRequest.Builder(
+                NotifierWorker::class.java,
+                PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS,
+                TimeUnit.MILLISECONDS
+            ).addTag(NAME).build()
+            WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
+                NAME,
+                ExistingPeriodicWorkPolicy.UPDATE,
+                workRequest,
+            )
+        }
     }
 }

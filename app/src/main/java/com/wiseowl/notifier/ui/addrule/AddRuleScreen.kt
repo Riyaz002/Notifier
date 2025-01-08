@@ -108,7 +108,7 @@ fun AddRuleScreen(
             )
 
             OutlinedTextField(
-                value = state.ruleDescription.value.toString(),
+                value = state.ruleDescription.value ?: "",
                 shape = AbsoluteCutCornerShape(0.dp),
                 singleLine = true,
                 label = { Text(state.ruleDescription.label) },

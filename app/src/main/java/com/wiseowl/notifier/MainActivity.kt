@@ -51,7 +51,6 @@ import java.util.concurrent.TimeUnit
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        NotifierDataStore.initialize(this.application)
         ServiceLocator.initialize(this.application)
 
         val requestLauncher =
@@ -60,16 +59,7 @@ class MainActivity : ComponentActivity() {
                     if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.O) {
                         Notification().createNotificationChannel(this.applicationContext, "default", "notifier", NotificationManager.IMPORTANCE_HIGH)
                     }
-                    val workRequest: PeriodicWorkRequest = PeriodicWorkRequest.Builder(
-                        NotifierWorker::class.java,
-                        PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS,
-                        TimeUnit.MILLISECONDS
-                    ).addTag(NAME).build()
-                    WorkManager.getInstance(applicationContext).enqueueUniquePeriodicWork(
-                        NAME,
-                        ExistingPeriodicWorkPolicy.UPDATE,
-                        workRequest,
-                    )
+                    NotifierWorker.schedule(applicationContext)
                 }
             }
         var permissionRequired = arrayOf(
