@@ -3,6 +3,9 @@ package com.wiseowl.notifier
 import android.app.NotificationManager
 import android.os.Build
 import android.os.Bundle
+import android.os.CombinedVibration
+import android.os.VibrationEffect
+import android.os.VibratorManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -29,24 +32,19 @@ import com.wiseowl.notifier.ui.navigation.Root
 import com.wiseowl.notifier.ui.theme.NotifierTheme
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequest
-import androidx.work.WorkManager
-import com.wiseowl.notifier.data.local.datastore.NotifierDataStore
 import com.wiseowl.notifier.data.service.notification.Notification
 import com.wiseowl.notifier.data.service.worker.NotifierWorker
-import com.wiseowl.notifier.data.service.worker.NotifierWorker.Companion.NAME
 import com.wiseowl.notifier.domain.event.EventHandler
 import com.wiseowl.notifier.domain.exception.UnhandledEventException
 import com.wiseowl.notifier.ui.Navigate
 import com.wiseowl.notifier.ui.PopBackStack
 import com.wiseowl.notifier.ui.ProgressBar
 import com.wiseowl.notifier.ui.SnackBar
+import com.wiseowl.notifier.ui.Vibrate
 import com.wiseowl.notifier.ui.common.component.BlurBox
 import com.wiseowl.notifier.ui.common.component.MovingParticle
 import com.wiseowl.notifier.ui.common.component.Shape
 import kotlinx.coroutines.launch
-import java.util.concurrent.TimeUnit
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,6 +91,7 @@ class MainActivity : ComponentActivity() {
                     is Navigate -> navController.navigate(event.screen)
                     is PopBackStack -> navController.popBackStack()
                     is ProgressBar -> progressBarVisibility = event.show
+                    is Vibrate -> vibrate(event.type)
                     else -> throw UnhandledEventException(event)
                 }
             }
@@ -126,5 +125,14 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+    }
+}
+
+fun MainActivity.vibrate(effect: Vibrate.Effect){
+    if(Build.VERSION_CODES.S <= Build.VERSION.SDK_INT){
+        val vibrateManager = getSystemService(VibratorManager::class.java)
+        vibrateManager.vibrate(
+            CombinedVibration.createParallel(VibrationEffect.createPredefined(effect.type))
+        )
     }
 }

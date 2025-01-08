@@ -10,6 +10,7 @@ import com.wiseowl.notifier.ui.Event
 import com.wiseowl.notifier.ui.PopBackStack
 import com.wiseowl.notifier.ui.ProgressBar
 import com.wiseowl.notifier.ui.SnackBar
+import com.wiseowl.notifier.ui.Vibrate
 import com.wiseowl.notifier.ui.addrule.model.AddRuleEvent
 import com.wiseowl.notifier.ui.addrule.model.AddRuleState
 import com.wiseowl.notifier.ui.addrule.model.AddRuleUIEvent
@@ -94,6 +95,7 @@ class AddRuleViewModel: ViewModel() {
                     )
                     with(RuleValidator(rule)){
                         if(isRuleValid()){
+                            EventHandler.send(Vibrate(Vibrate.Effect.THUD))
                             ServiceLocator.getRulesRepository().addRule(rule)
                             EventHandler.send(PopBackStack)
                             EventHandler.send(SnackBar("Rule added successfully"))
