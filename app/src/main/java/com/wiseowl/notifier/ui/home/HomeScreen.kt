@@ -23,7 +23,7 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.wiseowl.notifier.ui.Navigate
+import com.wiseowl.notifier.domain.event.Navigate
 import com.wiseowl.notifier.ui.home.component.Rules
 import com.wiseowl.notifier.ui.home.model.HomeState
 import com.wiseowl.notifier.ui.navigation.AddRule

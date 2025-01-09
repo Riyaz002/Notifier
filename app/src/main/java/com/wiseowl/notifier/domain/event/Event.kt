@@ -1,4 +1,4 @@
-package com.wiseowl.notifier.ui
+package com.wiseowl.notifier.domain.event
 
 import android.annotation.SuppressLint
 import android.os.VibrationEffect

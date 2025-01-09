@@ -34,13 +34,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.unit.dp
 import com.wiseowl.notifier.data.service.notification.Notification
 import com.wiseowl.notifier.data.service.worker.NotifierWorker
-import com.wiseowl.notifier.domain.event.EventHandler
+import com.wiseowl.notifier.domain.event.EventManager
 import com.wiseowl.notifier.domain.exception.UnhandledEventException
-import com.wiseowl.notifier.ui.Navigate
-import com.wiseowl.notifier.ui.PopBackStack
-import com.wiseowl.notifier.ui.ProgressBar
-import com.wiseowl.notifier.ui.SnackBar
-import com.wiseowl.notifier.ui.Vibrate
+import com.wiseowl.notifier.domain.event.Navigate
+import com.wiseowl.notifier.domain.event.PopBackStack
+import com.wiseowl.notifier.domain.event.ProgressBar
+import com.wiseowl.notifier.domain.event.SnackBar
+import com.wiseowl.notifier.domain.event.Vibrate
 import com.wiseowl.notifier.ui.common.component.BlurBox
 import com.wiseowl.notifier.ui.common.component.MovingParticle
 import com.wiseowl.notifier.ui.common.component.Shape
@@ -82,7 +82,7 @@ class MainActivity : ComponentActivity() {
             var padding by remember { mutableStateOf(PaddingValues()) }
             val isLoggedIn = ServiceLocator.getAuthenticator().isLoggedIn()
             val currentScreen = if (isLoggedIn) Home else Login
-            EventHandler.subscribe { event ->
+            EventManager.subscribe { event ->
                 when (event) {
                     is SnackBar -> coroutineScope.launch {
                         snackBarHost.currentSnackbarData?.dismiss()

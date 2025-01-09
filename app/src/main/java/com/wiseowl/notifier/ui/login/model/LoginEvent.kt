@@ -1,6 +1,6 @@
 package com.wiseowl.notifier.ui.login.model
 
-import com.wiseowl.notifier.ui.Event
+import com.wiseowl.notifier.domain.event.Event
 
 sealed class LoginEvent: Event() {
     data class EditUserName(val value: String): LoginEvent()

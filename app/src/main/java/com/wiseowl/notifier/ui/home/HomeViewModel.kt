@@ -3,8 +3,8 @@ package com.wiseowl.notifier.ui.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.wiseowl.notifier.data.di.ServiceLocator
-import com.wiseowl.notifier.domain.event.EventHandler
-import com.wiseowl.notifier.ui.Event
+import com.wiseowl.notifier.domain.event.EventManager
+import com.wiseowl.notifier.domain.event.Event
 import com.wiseowl.notifier.ui.home.model.HomeEvent
 import com.wiseowl.notifier.ui.home.model.HomeState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,7 +35,7 @@ class HomeViewModel: ViewModel() {
             is HomeEvent.DeleteRule -> viewModelScope.launch {
                 ServiceLocator.getRulesRepository().deleteRule(event.ruleId)
             }
-            else -> EventHandler.send(event)
+            else -> EventManager.send(event)
         }
     }
 }
