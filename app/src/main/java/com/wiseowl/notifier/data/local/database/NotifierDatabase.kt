@@ -20,7 +20,10 @@ abstract class NotifierDatabase: RoomDatabase() {
 
         fun getInstance(context: Context): NotifierDatabase {
             return INSTANCE ?: synchronized(this){
-                INSTANCE = Room.databaseBuilder(context, NotifierDatabase::class.java, NAME).build()
+                INSTANCE = Room
+                    .databaseBuilder(context, NotifierDatabase::class.java, NAME)
+                    .fallbackToDestructiveMigration()
+                    .build()
                 INSTANCE!!
             }
         }

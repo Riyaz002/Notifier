@@ -45,6 +45,7 @@ import com.wiseowl.notifier.ui.common.component.BlurBox
 import com.wiseowl.notifier.ui.common.component.MovingParticle
 import com.wiseowl.notifier.ui.common.component.Shape
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -112,7 +113,7 @@ class MainActivity : ComponentActivity() {
                     BlurBox(Modifier.fillMaxSize().padding(padding), 80f) {
                         repeat(5){ MovingParticle(
                             size = 300.dp,
-                            speed = 11,
+                            speed = Random.nextInt(4,12),
                             shape = Shape.CIRCLE
                         ) }
                     }
