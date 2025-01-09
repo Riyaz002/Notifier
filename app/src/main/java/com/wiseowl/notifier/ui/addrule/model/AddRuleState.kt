@@ -7,7 +7,7 @@ import com.wiseowl.notifier.ui.common.model.InputField
 
 data class AddRuleState(
     val ruleName: InputField<String> = InputField(value = "", label = "name"),
-    val ruleDescription: InputField<String> = InputField(value = "",label = "description"),
+    val ruleDescription: InputField<String> = InputField(value = null,label = "description"),
     val selectedPlaceName: InputField<String> = InputField(value = "", label = "Place", enabled = false),
     val locationSelectorExpandedState: Boolean = false,
     val actionTypeSelectorExpandedState: Boolean = false,

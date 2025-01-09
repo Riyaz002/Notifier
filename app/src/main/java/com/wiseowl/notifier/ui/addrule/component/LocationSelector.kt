@@ -41,10 +41,10 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.Circle
 import com.google.maps.android.compose.GoogleMap
 import com.google.maps.android.compose.rememberCameraPositionState
-import com.wiseowl.notifier.domain.event.EventHandler
+import com.wiseowl.notifier.domain.event.EventManager
 import com.wiseowl.notifier.domain.model.Location
-import com.wiseowl.notifier.ui.Event
-import com.wiseowl.notifier.ui.ProgressBar
+import com.wiseowl.notifier.domain.event.Event
+import com.wiseowl.notifier.domain.event.ProgressBar
 import com.wiseowl.notifier.ui.addrule.model.AddRuleEvent
 import com.wiseowl.notifier.ui.addrule.model.Suggestion
 import kotlinx.coroutines.launch
@@ -79,8 +79,8 @@ fun LocationSelector(
     val transitionAnimationState = animateFloatAsState(targetValue = effectedArea?.toFloat() ?: 0f)
     LaunchedEffect(key1 = selectedLocation) {
         if (selectedLocation == null) {
-            EventHandler.send(ProgressBar(true))
-        } else EventHandler.send(ProgressBar(false))
+            EventManager.send(ProgressBar(true))
+        } else EventManager.send(ProgressBar(false))
         scope.launch {
             if (selectedLocation != null) {
                 cameraPosition.animate(

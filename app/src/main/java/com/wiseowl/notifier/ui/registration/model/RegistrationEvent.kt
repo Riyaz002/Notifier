@@ -1,6 +1,6 @@
 package com.wiseowl.notifier.ui.registration.model
 
-import com.wiseowl.notifier.ui.Event
+import com.wiseowl.notifier.domain.event.Event
 
 sealed class RegistrationEvent: Event() {
     data class EditFirstName(val value: String): RegistrationEvent()

@@ -85,7 +85,7 @@ fun MovingParticle(
         Box(
             modifier = Modifier
                 .size(size)
-                .offset(animatable.value.x.dp, animatable.value.y.dp)
+                .position(animatable.value.x.dp, animatable.value.y.dp)
                 .shape(randomColor.value, shape = shape.value)
         )
     }
@@ -93,7 +93,7 @@ fun MovingParticle(
 
 fun getRandoPosition(side: Side, size: Dp, screenWidth: Int, screenHeight: Int): Offset {
     var offset = Random.nextDouble(0.0, 1.0).toFloat()
-    if (side == Side.TOP || side == Side.BOTTOM) offset *= screenWidth else offset *= screenHeight
+    offset *= if (side == Side.TOP || side == Side.BOTTOM) screenWidth else screenHeight
     return when (side) {
         Side.TOP -> Offset(-size.value + offset, -size.value)
         Side.RIGHT -> Offset(screenWidth + size.value, -size.value + offset)

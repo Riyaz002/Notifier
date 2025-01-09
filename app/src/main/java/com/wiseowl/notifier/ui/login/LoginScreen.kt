@@ -20,7 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.wiseowl.notifier.ui.Navigate
+import com.wiseowl.notifier.domain.event.Navigate
 import com.wiseowl.notifier.ui.login.model.LoginEvent
 import com.wiseowl.notifier.ui.navigation.Registration
 

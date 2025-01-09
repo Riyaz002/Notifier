@@ -3,15 +3,14 @@ package com.wiseowl.notifier.ui.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.AuthResult
-import com.wiseowl.notifier.data.repository.UserRepositoryImpl
 import com.wiseowl.notifier.data.di.ServiceLocator
-import com.wiseowl.notifier.domain.event.EventHandler
+import com.wiseowl.notifier.domain.event.EventManager
 import com.wiseowl.notifier.domain.util.Result
-import com.wiseowl.notifier.ui.Event
-import com.wiseowl.notifier.ui.Navigate
-import com.wiseowl.notifier.ui.PopBackStack
-import com.wiseowl.notifier.ui.ProgressBar
-import com.wiseowl.notifier.ui.SnackBar
+import com.wiseowl.notifier.domain.event.Event
+import com.wiseowl.notifier.domain.event.Navigate
+import com.wiseowl.notifier.domain.event.PopBackStack
+import com.wiseowl.notifier.domain.event.ProgressBar
+import com.wiseowl.notifier.domain.event.SnackBar
 import com.wiseowl.notifier.ui.login.model.LoginEvent
 import com.wiseowl.notifier.ui.login.model.LoginState
 import com.wiseowl.notifier.ui.navigation.Home
@@ -40,20 +39,20 @@ class LoginViewModel: ViewModel() {
             }
 
             is LoginEvent.Login -> {
-                EventHandler.send(ProgressBar(true))
+                EventManager.send(ProgressBar(true))
                 ServiceLocator.getAuthenticator().signIn(event.email, event.password){ result: Result ->
                     when(result){
-                        is Result.Failure -> EventHandler.send(SnackBar(result.error?.message.toString()))
+                        is Result.Failure -> EventManager.send(SnackBar(result.error?.message.toString()))
                         is Result.Success<*> -> {
                             saveUserInfo(result.data as AuthResult)
-                            EventHandler.send(PopBackStack)
-                            EventHandler.send(Navigate(Home))
+                            EventManager.send(PopBackStack)
+                            EventManager.send(Navigate(Home))
                         }
                     }
-                    EventHandler.send(ProgressBar(false))
+                    EventManager.send(ProgressBar(false))
                 }
             }
-            else -> EventHandler.send(event)
+            else -> EventManager.send(event)
         }
     }
 
