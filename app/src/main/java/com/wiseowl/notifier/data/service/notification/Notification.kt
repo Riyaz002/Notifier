@@ -6,6 +6,9 @@ import android.content.Context
 import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import com.riyaz.dakiya.Dakiya
+import com.riyaz.dakiya.core.model.Message
+import com.riyaz.dakiya.core.notification.Style
 import com.wiseowl.notifier.R
 
 class Notification {
@@ -22,23 +25,15 @@ class Notification {
     /**
      * Send general/default notification.
      */
-    fun Context.notify(id: Int, title: String, subtitle: String){
-        val notification = NotificationCompat.Builder(this, "default")
-        notification
-            .setContentTitle(title)
-            .setContentText(subtitle)
-            .setSmallIcon(R.drawable.ic_launcher_foreground)
-        val notificationManager = this.getSystemService(NotificationManager::class.java)
-        notificationManager.notify(id, notification.build())
-        //TODO: This version of Dakiya have issues sending notification
-//        val message = Message(
-//            id,
-//            title = title,
-//            subtitle = subtitle,
-//            style = Style.DEFAULT,
-//            channelID = "default"
-//        )
-//
-//        Dakiya.showNotification(message)
+    fun notify(id: Int, title: String, subtitle: String){
+        val message = Message(
+            id,
+            title = title,
+            subtitle = subtitle,
+            style = Style.DEFAULT,
+            channelID = "default"
+        )
+
+        Dakiya.showNotification(message)
     }
 }

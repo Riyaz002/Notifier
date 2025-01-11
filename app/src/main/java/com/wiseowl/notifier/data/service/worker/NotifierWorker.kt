@@ -38,7 +38,7 @@ class NotifierWorker(context: Context, parameters: WorkerParameters) :
         rules.forEach { rule ->
             val ruleLongitude = rule.location.longitude
             val ruleLatitude = rule.location.latitude
-            val distanceInMeters = locationService.getDistanceFromLatLonInMeters(
+            val distanceInMeters = getDistanceFromLatLonInMeters(
                 Location(
                     longitude = longitude,
                     latitude = latitude
