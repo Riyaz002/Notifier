@@ -4,6 +4,9 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.gson.Gson
 import com.wiseowl.notifier.data.di.ServiceLocator
+import com.wiseowl.notifier.domain.model.ActionType
+import com.wiseowl.notifier.domain.model.Location
+import com.wiseowl.notifier.domain.model.RepeatType
 import com.wiseowl.notifier.domain.model.Rule
 import com.wiseowl.notifier.domain.model.User
 import kotlinx.coroutines.tasks.await
@@ -16,7 +19,9 @@ class FirebaseDataService: RemoteDataService {
         firestore.collection(USERS_COLLECTION).document(user.userId).set(user)
     }
 
-    //TODO: just doing the same thing saveUser do, Remove if it is useless
+    /**
+     * Just doing the same thing [saveUser] do, Will be removed in future.
+     */
     override fun updateUser(user: User) {
         firestore.collection(USERS_COLLECTION).document(user.userId).set(user)
     }
@@ -46,13 +51,10 @@ class FirebaseDataService: RemoteDataService {
         result.forEach { userDoc ->
             val userId = userDoc.id
             val rules = mutableListOf<Rule>()
-            val gson = Gson()
             firestore.collection(USERS_COLLECTION)
                 .document(userId)
                 .collection(RULES_COLLECTION)
-                .get().await().map { rule ->
-                    rules.add(gson.fromJson(rule.data.toString(), Rule::class.java))
-                }
+                .get().await().map { rule -> rules.add(rule.data.toRule()) }
             return rules
         }
         return listOf()
@@ -65,5 +67,23 @@ class FirebaseDataService: RemoteDataService {
     companion object{
         const val USERS_COLLECTION = "users"
         const val RULES_COLLECTION = "rules"
+
+        fun Map<String, Any>.toRule(): Rule{
+            return Rule(
+                id = getValue(Rule::id.name).toString().toInt(),
+                name = getValue(Rule::name.name).toString(),
+                description = getOrDefault(Rule::description.name, null)?.toString(),
+                location = (getValue(Rule::location.name) as Map<String, Any>).toLocation(),
+                radiusInMeter = getValue(Rule::radiusInMeter.name).toString().toDouble(),
+                active = getValue(Rule::active.name).toString().toBoolean(),
+                actionType = ActionType.valueOf(getValue(Rule::actionType.name).toString()),
+                repeatType = RepeatType.valueOf(getValue(Rule::repeatType.name).toString()),
+                delayInMinutes = getValue(Rule::delayInMinutes.name).toString().toInt(),
+            )
+        }
+
+        private fun Map<String, Any>.toLocation(): Location{
+            return Location(getValue(Location::latitude.name).toString().toDouble(),getValue(Location::longitude.name).toString().toDouble())
+        }
     }
 }
