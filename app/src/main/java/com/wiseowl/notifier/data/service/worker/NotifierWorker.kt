@@ -27,8 +27,12 @@ class NotifierWorker(context: Context, parameters: WorkerParameters) : Coroutine
     }
     private val locationService = ServiceLocator.getLocationService()
     override suspend fun doWork(): Result {
-        try {
-            if(!ServiceLocator.getAuthenticator().isLoggedIn()) throw IllegalStateException("USER NOT LOG IN")
+        if(!ServiceLocator.getAuthenticator().isLoggedIn()) return Result.failure()
+
+        val location = locationService.getCurrentLocation(applicationContext, Dispatchers.IO)
+            ?: return Result.failure()
+        val longitude = location.longitude
+        val latitude = location.latitude
 
             val location = locationService.getCurrentLocation(applicationContext, Dispatchers.IO)
                 ?: return Result.failure()
@@ -82,21 +86,6 @@ class NotifierWorker(context: Context, parameters: WorkerParameters) : Coroutine
                     }
                 }
             }
-        } catch (e: Exception){
-            NotifierDatabase.getInstance(applicationContext).dao.insertRule(
-                Rule(
-                    id = Random.nextInt(),
-                    name = "SOME ERROR",
-                    description = e.message.toString(),
-                    location = Location(0.0,0.0),
-                    radiusInMeter = 1.1,
-                    active = true,
-                    actionType = ActionType.LEAVING,
-                    repeatType = RepeatType.REPEAT,
-                    delayInMinutes = 0
-                ).toRuleEntity()
-            )
-        }
         return Result.success()
     }
 
