@@ -19,13 +19,25 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.wiseowl.notifier.ui.common.component.Side.Companion.opposite
 import kotlin.random.Random
 
 enum class Side(val value: Int) {
     TOP(0),
     RIGHT(1),
     BOTTOM(2),
-    LEFT(3)
+    LEFT(3);
+
+    companion object{
+        fun Side.opposite(): Side{
+            return when(this){
+                TOP -> BOTTOM
+                RIGHT -> LEFT
+                BOTTOM -> TOP
+                LEFT -> RIGHT
+            }
+        }
+    }
 }
 
 @Composable
@@ -63,7 +75,7 @@ fun MovingParticle(
                 )
             )
             startSide = Side.entries.random()
-            endSide = Side.entries.filter { it != startSide }.random()
+            endSide = startSide.opposite()
             startPosition.value = getRandoPosition(startSide, size, screenWidth, screenHeight)
             if(color==null){
                 randomColor.value = Color(
@@ -85,7 +97,7 @@ fun MovingParticle(
         Box(
             modifier = Modifier
                 .size(size)
-                .offset(animatable.value.x.dp, animatable.value.y.dp)
+                .position(animatable.value.x.dp, animatable.value.y.dp)
                 .shape(randomColor.value, shape = shape.value)
         )
     }
@@ -93,7 +105,7 @@ fun MovingParticle(
 
 fun getRandoPosition(side: Side, size: Dp, screenWidth: Int, screenHeight: Int): Offset {
     var offset = Random.nextDouble(0.0, 1.0).toFloat()
-    if (side == Side.TOP || side == Side.BOTTOM) offset *= screenWidth else offset *= screenHeight
+    offset *= if (side == Side.TOP || side == Side.BOTTOM) screenWidth else screenHeight
     return when (side) {
         Side.TOP -> Offset(-size.value + offset, -size.value)
         Side.RIGHT -> Offset(screenWidth + size.value, -size.value + offset)

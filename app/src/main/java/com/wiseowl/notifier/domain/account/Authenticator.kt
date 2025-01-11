@@ -6,6 +6,9 @@ import com.wiseowl.notifier.domain.exception.SignUpException
 import kotlin.jvm.Throws
 
 interface Authenticator {
+
+    fun getCurrentUserId(): String?
+
     fun isLoggedIn(): Boolean
 
     @Throws(SignUpException::class)

@@ -3,13 +3,14 @@ package com.wiseowl.notifier.ui.addrule
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.wiseowl.notifier.data.di.ServiceLocator
-import com.wiseowl.notifier.domain.event.EventHandler
+import com.wiseowl.notifier.domain.event.EventManager
 import com.wiseowl.notifier.domain.model.Rule
 import com.wiseowl.notifier.domain.util.RuleValidator
-import com.wiseowl.notifier.ui.Event
-import com.wiseowl.notifier.ui.PopBackStack
-import com.wiseowl.notifier.ui.ProgressBar
-import com.wiseowl.notifier.ui.SnackBar
+import com.wiseowl.notifier.domain.event.Event
+import com.wiseowl.notifier.domain.event.PopBackStack
+import com.wiseowl.notifier.domain.event.ProgressBar
+import com.wiseowl.notifier.domain.event.SnackBar
+import com.wiseowl.notifier.domain.event.Vibrate
 import com.wiseowl.notifier.ui.addrule.model.AddRuleEvent
 import com.wiseowl.notifier.ui.addrule.model.AddRuleState
 import com.wiseowl.notifier.ui.addrule.model.AddRuleUIEvent
@@ -55,11 +56,11 @@ class AddRuleViewModel: ViewModel() {
             }
             is AddRuleEvent.OnSuggestionSelected -> {
                 viewModelScope.launch(Dispatchers.IO) {
-                    EventHandler.send(ProgressBar(true))
+                    EventManager.send(ProgressBar(true))
                     val placeLocation = ServiceLocator.getPlacesService().getPlaceDetail(event.suggestion.placeId)
                     _state.update { state -> state.copy(selectedPlaceLocation = placeLocation, suggestions = listOf()) }
                     _state.update { state -> state.copy(selectedPlaceName = state.selectedPlaceName.updateValue(event.suggestion.fullText.toString()), suggestions = listOf()) }
-                    EventHandler.send(ProgressBar(false))
+                    EventManager.send(ProgressBar(false))
                 }
             }
             is AddRuleEvent.CreateRule -> {
@@ -89,19 +90,20 @@ class AddRuleViewModel: ViewModel() {
                         radiusInMeter = value.ruleRadius.value,
                         actionType = value.actionType.value!!,
                         active = true,
-                        repeatType = value.repeatType.value,
+                        repeatType = value.repeatType.value!!,
                         delayInMinutes = value.ruleDelay.value
                     )
                     with(RuleValidator(rule)){
                         if(isRuleValid()){
+                            EventManager.send(Vibrate(Vibrate.Effect.THUD))
                             ServiceLocator.getRulesRepository().addRule(rule)
-                            EventHandler.send(PopBackStack)
-                            EventHandler.send(SnackBar("Rule added successfully"))
+                            EventManager.send(PopBackStack)
+                            EventManager.send(SnackBar("Rule added successfully"))
                         } else throw Exception("Creating rule with invalid parameters")
                     }
                 }
             }
-            else -> EventHandler.send(event)
+            else -> EventManager.send(event)
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.wiseowl.notifier.domain.event
 
-import com.wiseowl.notifier.ui.Event
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.MainScope
@@ -12,13 +11,13 @@ import kotlinx.coroutines.launch
 
 
 /**
- * PubSub model to act on global events.
- * Subscribe it from a higher level like [MainActivity] to listen to events.
+ * `PubSub` model to act on global events.
+ * Subscribe it from a higher level to listen to events.
  *
- * One can send [Event] from any part of the app using [EventHandler.send].
+ * One can send [Event] from any part of the app using [EventManager.send].
  */
-object EventHandler {
-    private val channel: Channel<Event> = Channel{  }
+object EventManager {
+    private val channel: Channel<Event> = Channel {  }
     private var subscriber: ((Event) -> Unit)? = null
     private val coroutineScope = CoroutineScope(Dispatchers.Default + SupervisorJob())
 
@@ -33,9 +32,9 @@ object EventHandler {
     }
 
     /**
-     * Subscribe for the events that are send using [EventHandler.send]
+     * Subscribe for the events that are send using [EventManager.send]
      *
-     * Note: Only one subscriber can subscribe for the [Event]s at a time. Since, [Event]s are global, it makes more sense to have only single higher level handler like [MainActivity].
+     * **Note**: Only one [subscriber] can [subscribe] for the [Event]'s at a time. Since, [Event]'s are global, it makes more sense to have only single higher level handler.
      */
     fun subscribe(onEvent: (Event) -> Unit) {
         subscriber = onEvent

@@ -1,7 +1,7 @@
 package com.wiseowl.notifier.data.repository
 
-import com.wiseowl.notifier.data.remote.FirebaseFireStore
 import com.wiseowl.notifier.data.local.datastore.NotifierDataStore
+import com.wiseowl.notifier.data.remote.RemoteDataService
 import com.wiseowl.notifier.domain.repository.UserRepository
 import com.wiseowl.notifier.domain.model.User
 import kotlinx.coroutines.CoroutineScope
@@ -12,16 +12,15 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
-class UserRepositoryImpl(): UserRepository {
-    private val local = NotifierDataStore
-    private val remote = FirebaseFireStore
+class UserRepositoryImpl(private val remote: RemoteDataService): UserRepository {
     private val scope = CoroutineScope(Dispatchers.IO + SupervisorJob())
+    private val local = NotifierDataStore
 
     private fun performDataSync(){
         scope.launch {
             val uId = local.getUser().first().userId
             if(uId.isNotEmpty()){
-                val user = remote.getUserById(uId)
+                val user = remote.getUserInfo(uId)
                 local.saveUser(user)
                 local.updateSyncTime()
             }
@@ -45,7 +44,7 @@ class UserRepositoryImpl(): UserRepository {
 
     override suspend fun getUserById(id: String): User {
         return scope.async {
-            val user = remote.getUserById(id)
+            val user = remote.getUserInfo(id)
             local.saveUser(user)
             user
         }.await()

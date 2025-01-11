@@ -6,6 +6,11 @@ import com.wiseowl.notifier.domain.account.Authenticator
 import com.wiseowl.notifier.domain.util.Result
 
 class FirebaseAuthenticator: Authenticator {
+
+    override fun getCurrentUserId(): String? {
+        return Firebase.auth.currentUser?.uid
+    }
+
     override fun isLoggedIn(): Boolean = Firebase.auth.currentUser != null
 
     override fun signUp(email: String, password: String, onFinish: (Result) -> Unit) {

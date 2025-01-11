@@ -3,7 +3,7 @@ package com.wiseowl.notifier.ui.addrule.model
 import com.wiseowl.notifier.domain.model.ActionType
 import com.wiseowl.notifier.domain.model.Location
 import com.wiseowl.notifier.domain.model.RepeatType
-import com.wiseowl.notifier.ui.Event
+import com.wiseowl.notifier.domain.event.Event
 
 sealed class AddRuleEvent: Event() {
     data object CreateRule : AddRuleEvent()

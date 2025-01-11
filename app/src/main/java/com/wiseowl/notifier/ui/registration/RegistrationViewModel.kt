@@ -3,16 +3,15 @@ package com.wiseowl.notifier.ui.registration
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.AuthResult
-import com.wiseowl.notifier.data.repository.UserRepositoryImpl
 import com.wiseowl.notifier.data.di.ServiceLocator
-import com.wiseowl.notifier.domain.event.EventHandler
+import com.wiseowl.notifier.domain.event.EventManager
 import com.wiseowl.notifier.domain.util.Result
 import com.wiseowl.notifier.domain.model.User
-import com.wiseowl.notifier.ui.Event
-import com.wiseowl.notifier.ui.Navigate
-import com.wiseowl.notifier.ui.PopBackStack
-import com.wiseowl.notifier.ui.ProgressBar
-import com.wiseowl.notifier.ui.SnackBar
+import com.wiseowl.notifier.domain.event.Event
+import com.wiseowl.notifier.domain.event.Navigate
+import com.wiseowl.notifier.domain.event.PopBackStack
+import com.wiseowl.notifier.domain.event.ProgressBar
+import com.wiseowl.notifier.domain.event.SnackBar
 import com.wiseowl.notifier.ui.navigation.Home
 import com.wiseowl.notifier.ui.registration.model.RegistrationEvent
 import com.wiseowl.notifier.ui.registration.model.RegistrationState
@@ -41,24 +40,24 @@ class RegistrationViewModel: ViewModel() {
                 _state.update{ newState -> newState.copy(password = newState.password.updateValue(value = event.value)) }
             }
             is RegistrationEvent.Register -> {
-                EventHandler.send(ProgressBar(true))
+                EventManager.send(ProgressBar(true))
                 val email = state.value.email.value
                 val password = state.value.password.value
                 if(email.isNullOrEmpty()) {
                     _state.update{ newState -> newState.copy(email = newState.email.copy(error = "email is required")) }
-                    EventHandler.send(SnackBar("Email cannot be empty"))
+                    EventManager.send(SnackBar("Email cannot be empty"))
                     return
                 } else if(password.isNullOrEmpty()) {
                     _state.update{ newState -> newState.copy(password = newState.password.copy(error = "password is required")) }
-                    EventHandler.send(SnackBar(("Password cannot be empty")))
+                    EventManager.send(SnackBar(("Password cannot be empty")))
                     return
                 }
                 ServiceLocator.getAuthenticator().signUp(email, password){ result: Result ->
                     when(result){
-                        is Result.Failure -> EventHandler.send(SnackBar(result.error?.message.toString()))
+                        is Result.Failure -> EventManager.send(SnackBar(result.error?.message.toString()))
                         is Result.Success<*> -> {
                             viewModelScope.launch(Dispatchers.IO) {
-                                EventHandler.send(ProgressBar(true))
+                                EventManager.send(ProgressBar(true))
                                 val authResult = result.data as AuthResult
                                 ServiceLocator.getUserRepository().saveUser(
                                     User(
@@ -69,16 +68,16 @@ class RegistrationViewModel: ViewModel() {
                                         profilePicture = null
                                     )
                                 )
-                                EventHandler.send(ProgressBar(false))
-                                EventHandler.send(PopBackStack)
-                                EventHandler.send(Navigate(Home))
+                                EventManager.send(ProgressBar(false))
+                                EventManager.send(PopBackStack)
+                                EventManager.send(Navigate(Home))
                             }
                         }
                     }
-                    EventHandler.send(ProgressBar(false))
+                    EventManager.send(ProgressBar(false))
                 }
             }
-            else -> EventHandler.send(event)
+            else -> EventManager.send(event)
         }
     }
 }
